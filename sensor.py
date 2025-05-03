@@ -67,7 +67,7 @@ class SunPowerSystemInfo(CoordinatorEntity, Entity):
         return self.coordinator.data
 
 
-'''class SunPowerDetailSensor(CoordinatorEntity, Entity):
+class SunPowerDetailSensor(CoordinatorEntity, Entity):
     """Entity to expose specific SunPower system detail fields."""
 
     def __init__(
@@ -105,4 +105,4 @@ class SunPowerSystemInfo(CoordinatorEntity, Entity):
             "model": data.get("inverter_model", "Unknown"),
             "sw_version": data.get("inv_version"),
         }
-'''
+
