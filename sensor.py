@@ -1,6 +1,7 @@
 """Sensor platform for SunPower Maxeon integration."""
 
 import logging
+from typing import Optional
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -39,17 +40,17 @@ class SunPowerSystemInfo(CoordinatorEntity, Entity):
         self._attr_should_poll = False
 
     @property
-    def state(self):
+    def state(self) -> str:
         """Return the system status as the main state."""
         return self.coordinator.data.get("status", "unknown")
 
     @property
-    def available(self):
+    def available(self) -> bool:
         """Return if entity is available."""
         return self.coordinator.last_update_success
 
     @property
-    def device_info(self):
+    def device_info(self) -> dict:
         """Return device metadata for the system."""
         data = self.coordinator.data
         return {
@@ -61,7 +62,7 @@ class SunPowerSystemInfo(CoordinatorEntity, Entity):
         }
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict:
         """Expose all API fields as attributes."""
         return self.coordinator.data
 
@@ -69,7 +70,13 @@ class SunPowerSystemInfo(CoordinatorEntity, Entity):
 class SunPowerDetailSensor(CoordinatorEntity, Entity):
     """Entity to expose specific SunPower system detail fields."""
 
-    def __init__(self, coordinator: SunPowerCoordinator, key: str, name: str, unit: str | None = None) -> None:
+    def __init__(
+        self,
+        coordinator: SunPowerCoordinator,
+        key: str,
+        name: str,
+        unit: Optional[str] = None,
+    ) -> None:
         super().__init__(coordinator)
         self._key = key
         self._attr_name = name
@@ -78,17 +85,17 @@ class SunPowerDetailSensor(CoordinatorEntity, Entity):
         self._attr_native_unit_of_measurement = unit
 
     @property
-    def state(self):
+    def state(self) -> Optional[float | int | str]:
         """Return the value for the specific system detail field."""
         return self.coordinator.data.get(self._key)
 
     @property
-    def available(self):
+    def available(self) -> bool:
         """Return if entity is available."""
         return self.coordinator.last_update_success
 
     @property
-    def device_info(self):
+    def device_info(self) -> dict:
         """Inherit device metadata from the main system entity."""
         data = self.coordinator.data
         return {
