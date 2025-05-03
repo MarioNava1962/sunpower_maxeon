@@ -21,23 +21,24 @@ class AsyncConfigEntryAuth:
         await self._oauth_session.async_ensure_token_valid()
         return self._oauth_session.token["access_token"]
 
-    async def async_get_systems(self) -> list:
-        token = await self.async_get_access_token()
-        headers = {"Authorization": f"Bearer {token}"}
-        url = "https://api.sunpower.maxeon.com/v1/systems"
+    async def async_get_systems(self) -> dict:
+    token = await self.async_get_access_token()
+    headers = {"Authorization": f"Bearer {token}"}
+    url = "https://api.sunpower.maxeon.com/v1/systems"
 
-        try:
-            async with self._websession.get(url, headers=headers) as resp:
-                resp.raise_for_status()
-                return await resp.json()
-        except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning("Received 404, returning dummy systems data")
-                return SYSTEMS.get("systems", [])
-            raise
-        except Exception as err:
-            _LOGGER.error("Failed to fetch systems: %s", err)
-            raise
+    try:
+        async with self._websession.get(url, headers=headers) as resp:
+            resp.raise_for_status()
+            return await resp.json()
+    except ClientResponseError as err:
+        if err.status == 404:
+            _LOGGER.warning("Received 404, returning dummy systems data")
+            return {"systems": SYSTEMS.get("systems", [])}  # ✅ FIXED: wrap it
+        raise
+    except Exception as err:
+        _LOGGER.error("Failed to fetch systems: %s", err)
+        return {"systems": SYSTEMS.get("systems", [])}  # ✅ FIXED: wrap it
+
 
     async def async_get_system_details(self, system_sn: str) -> dict:
         token = await self.async_get_access_token()
