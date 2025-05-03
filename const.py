@@ -8,7 +8,7 @@ OAUTH2_TOKEN = "https://api.sunpower.maxeon.com/v1/token"
 SYSTEMS = {
     "systems": [
         {
-            "system_sn": "SOD123456789001",
+            "system_sn": "default",
             "active_at": 1718612017,
             "installed_pv_power": 7.2,
             "inverter_model": "RESERVE-INV-1-P5-L1-INT",
@@ -27,8 +27,8 @@ SYSTEMS = {
 }
 
 SYSTEM_DETAILS = {
-    "SOD123456789001": {
-        "system_sn": "SOD123456789001",
+    "default": {
+        "system_sn": "default",
         "active_at": 1718612017,
         "installed_pv_power": 7.2,
         "inverter_model": "RESERVE-INV-1-P5-L1-INT",
