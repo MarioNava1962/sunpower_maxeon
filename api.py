@@ -51,8 +51,8 @@ class AsyncConfigEntryAuth:
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"System {system_sn} not found, returning dummy details")
-                return SYSTEM_DETAILS.get(system_sn, {})
+                return SYSTEM_DETAILS.get("default", {})
             raise
         except Exception as err:
             _LOGGER.error("Failed to fetch system details: %s", err)
-            raise
+            return return SYSTEM_DETAILS.get("default", {})
