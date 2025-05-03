@@ -33,7 +33,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         await coordinator.async_config_entry_first_refresh()
-        if not coordinator.data
+        if not coordinator.data:
             raise ConfigEntryNotReady("No systems found in SunPower account.")
     except Exception as err:
         raise ConfigEntryNotReady(f"Error connecting to SunPower API: {err}") from err
