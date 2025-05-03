@@ -2,7 +2,7 @@ import logging
 from aiohttp import ClientSession, ClientResponseError
 from homeassistant.helpers import config_entry_oauth2_flow
 
-from .const import SYSTEMS, SYSTEM_DETAILS
+from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,10 +19,12 @@ class AsyncConfigEntryAuth:
         self._oauth_session = oauth_session
 
     async def async_get_access_token(self) -> str:
+        """Ensure the OAuth token is valid and return the access token."""
         await self._oauth_session.async_ensure_token_valid()
         return self._oauth_session.token["access_token"]
 
     async def async_get_systems(self) -> dict:
+        """Fetch list of systems from the SunPower Maxeon API."""
         token = await self.async_get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
         url = "https://api.sunpower.maxeon.com/v1/systems"
@@ -41,6 +43,7 @@ class AsyncConfigEntryAuth:
             return {"systems": SYSTEMS.get("systems", [])}
 
     async def async_get_system_details(self, system_sn: str) -> dict:
+        """Fetch system details for a specific system by serial number."""
         token = await self.async_get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
         url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}"
@@ -57,3 +60,22 @@ class AsyncConfigEntryAuth:
         except Exception as err:
             _LOGGER.error("Failed to fetch system details: %s", err)
             return SYSTEM_DETAILS.get("default", {})
+
+    async def async_get_system_power(self, system_sn: str) -> dict:
+        """Fetch system power data from the power meter endpoint."""
+        token = await self.async_get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/power_meter"
+
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Power data for system {system_sn} not found, returning dummy data")
+                return POWER_METER.get("default", {})
+            raise
+        except Exception as err:
+            _LOGGER.error("Failed to fetch system power data: %s", err)
+            return POWER_METER.get("default", {})
