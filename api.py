@@ -55,4 +55,4 @@ class AsyncConfigEntryAuth:
             raise
         except Exception as err:
             _LOGGER.error("Failed to fetch system details: %s", err)
-            return return SYSTEM_DETAILS.get("default", {})
+            return SYSTEM_DETAILS.get("default", {})
