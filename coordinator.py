@@ -24,8 +24,16 @@ class SunPowerCoordinator(DataUpdateCoordinator):
         )
 
     async def _async_update_data(self):
-        """Fetch data from API endpoint."""
+        """Fetch and merge system and detail data from the API."""
         try:
-            return await self.api.async_get_systems()
+            systems_data = await self.api.async_get_systems()
+            system = systems_data["systems"][0]  # or handle multiple systems dynamically
+            details_data = await self.api.async_get_system_details(system["system_sn"])
+
+            # Merge both dictionaries
+            merged = {**system, **details_data}
+            return merged
+
         except Exception as err:
             raise UpdateFailed(f"Failed to fetch data: {err}") from err
+
