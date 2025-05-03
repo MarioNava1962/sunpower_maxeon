@@ -1,0 +1,15 @@
+{
+  "domain": "sunpower_maxeon",
+  "name": "SunPower Maxeon",
+  "version": "1.0.0",
+  "documentation": "https://api.sunpower.maxeon.com/docs/",
+  "requirements": [
+    "aiohttp>=3.7.0"
+  ],
+  "dependencies": [
+    "application_credentials"
+  ],
+  "codeowners": [],
+  "config_flow": true
+
+}
