@@ -38,12 +38,12 @@ class SunPowerCoordinator(DataUpdateCoordinator):
             if not system_sn:
                 _LOGGER.warning("Missing system_sn in response, using dummy system details")
                 return SYSTEM_DETAILS["default"]
-            #uncomment these when apis working
-            #details_data = await self.api.async_get_system_details(system_sn)
+            uncomment these when apis working
+            details_data = await self.api.async_get_system_details(system_sn)
 
             # Merge both dictionaries
-            #merged = {**system, **details_data}
-            return systems_data
+            merged = {**system, **details_data}
+            return merged
 
         except Exception as err:
             _LOGGER.error("Failed to fetch system data: %s", err)
