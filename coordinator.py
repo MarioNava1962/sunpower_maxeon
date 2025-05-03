@@ -3,9 +3,9 @@
 import logging
 from datetime import timedelta
 
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .api import AsyncConfigEntryAuth
+from .const import SYSTEM_DETAILS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,16 +24,27 @@ class SunPowerCoordinator(DataUpdateCoordinator):
         )
 
     async def _async_update_data(self):
-        """Fetch and merge system and detail data from the API."""
+        """Fetch and merge system and detail data from the API, fallback on failure."""
         try:
             systems_data = await self.api.async_get_systems()
-            system = systems_data["systems"][0]  # or handle multiple systems dynamically
-            details_data = await self.api.async_get_system_details(system["system_sn"])
+
+            if not systems_data.get("systems"):
+                _LOGGER.warning("No systems returned, using dummy system details")
+                return SYSTEM_DETAILS["default"]
+
+            system = systems_data["systems"][0]
+            system_sn = system.get("system_sn")
+
+            if not system_sn:
+                _LOGGER.warning("Missing system_sn in response, using dummy system details")
+                return SYSTEM_DETAILS["default"]
+
+            details_data = await self.api.async_get_system_details(system_sn)
 
             # Merge both dictionaries
             merged = {**system, **details_data}
             return merged
 
         except Exception as err:
-            raise UpdateFailed(f"Failed to fetch data: {err}") from err
-
+            _LOGGER.error("Failed to fetch system data: %s", err)
+            return SYSTEM_DETAILS["default"]
