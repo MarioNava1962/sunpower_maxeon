@@ -21,7 +21,7 @@ SYSTEMS = {
             "inv_version": "01000.165",
             "ems_version": "V0.11.04",
             "bms_version": "V1.53",
-            "status": "normal"
+            "status": "dummy_data"
         }
     ]
 }
@@ -41,6 +41,6 @@ SYSTEM_DETAILS = {
         "inv_version": "01000.165",
         "ems_version": "V0.11.04",
         "bms_version": "V1.53",
-        "status": "normal"
+        "status": "dummy_data"
     }
 }
