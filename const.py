@@ -44,3 +44,14 @@ SYSTEM_DETAILS = {
         "status": "dummy_data"
     }
 }
+
+POWER_METER = {
+  "system_sn": "SOD123456789001",
+  "timestamp": 1680334973,
+  "p_pv": 1992,
+  "p_grid": -1126,
+  "p_storage": 0,
+  "soc": 100,
+  "p_consumption": 866,
+  "status": "normal"
+}
