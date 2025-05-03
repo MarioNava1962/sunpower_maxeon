@@ -28,13 +28,31 @@ class AsyncConfigEntryAuth:
     async def async_get_systems(self) -> list:
         """Fetch a list of systems on the site."""
         token = await self.async_get_access_token()
+        _LOGGER.info(f"token:{token}")
         headers = {"Authorization": f"Bearer {token}"}
-        url = "https://api.maxeon.com/v1/systems"
+        url = "https://api.sunpower.maxeon.com/v1/systems"
 
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
+                _LOGGER.info("Response JSON: %s", await resp.json())
                 return await resp.json()
         except Exception as err:
             _LOGGER.error("Failed to fetch systems: %s", err)
+            raise
+
+    async def async_get_system_details(self, system_sn: str) -> dict:
+        """Fetch details for a specific system by serial number."""
+        token = await self.async_get_access_token()
+        _LOGGER.info(f"token:{token}")
+        headers = {"Authorization": f"Bearer {token}"}
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}"
+
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                _LOGGER.info(resp)
+                return await resp.json()
+        except Exception as err:
+            _LOGGER.error("Failed to fetch system details: %s", err)
             raise
