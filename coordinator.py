@@ -43,7 +43,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
 
             # Merge both dictionaries
             #merged = {**system, **details_data}
-            return system
+            return system_data
 
         except Exception as err:
             _LOGGER.error("Failed to fetch system data: %s", err)
