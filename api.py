@@ -74,8 +74,8 @@ class AsyncConfigEntryAuth:
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Power data for system {system_sn} not found, returning dummy data")
-                return POWER_METER.get("default", {})
+                return POWER_METER
             raise
         except Exception as err:
             _LOGGER.error("Failed to fetch system power data: %s", err)
-            return POWER_METER.get("default", {})
+            return POWER_METER
