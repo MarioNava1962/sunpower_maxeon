@@ -1,6 +1,6 @@
 {
   "name": "Sunpower Maxeon",
   "content_in_root": true,
-  "homeassistant": "2025.6.0",
+  "homeassistant": "2025.4.4",
   "country": ["IT"]
 }
