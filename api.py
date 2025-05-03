@@ -2,9 +2,10 @@ import logging
 from aiohttp import ClientSession, ClientResponseError
 from homeassistant.helpers import config_entry_oauth2_flow
 
-from .const import SYSTEMS, SYSTEM_DETAILS 
+from .const import SYSTEMS, SYSTEM_DETAILS
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class AsyncConfigEntryAuth:
     """Handle authenticated communication with the SunPower Maxeon API."""
@@ -22,23 +23,22 @@ class AsyncConfigEntryAuth:
         return self._oauth_session.token["access_token"]
 
     async def async_get_systems(self) -> dict:
-    token = await self.async_get_access_token()
-    headers = {"Authorization": f"Bearer {token}"}
-    url = "https://api.sunpower.maxeon.com/v1/systems"
+        token = await self.async_get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
+        url = "https://api.sunpower.maxeon.com/v1/systems"
 
-    try:
-        async with self._websession.get(url, headers=headers) as resp:
-            resp.raise_for_status()
-            return await resp.json()
-    except ClientResponseError as err:
-        if err.status == 404:
-            _LOGGER.warning("Received 404, returning dummy systems data")
-            return {"systems": SYSTEMS.get("systems", [])}  # ✅ FIXED: wrap it
-        raise
-    except Exception as err:
-        _LOGGER.error("Failed to fetch systems: %s", err)
-        return {"systems": SYSTEMS.get("systems", [])}  # ✅ FIXED: wrap it
-
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning("Received 404, returning dummy systems data")
+                return {"systems": SYSTEMS.get("systems", [])}
+            raise
+        except Exception as err:
+            _LOGGER.error("Failed to fetch systems: %s", err)
+            return {"systems": SYSTEMS.get("systems", [])}
 
     async def async_get_system_details(self, system_sn: str) -> dict:
         token = await self.async_get_access_token()
