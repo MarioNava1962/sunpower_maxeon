@@ -2,7 +2,7 @@ import logging
 from aiohttp import ClientSession, ClientResponseError
 from homeassistant.helpers import config_entry_oauth2_flow
 
-from .config import SYSTEMS, SYSTEM_DETAILS 
+from .const import SYSTEMS, SYSTEM_DETAILS 
 
 _LOGGER = logging.getLogger(__name__)
 
