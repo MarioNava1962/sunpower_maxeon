@@ -42,3 +42,23 @@ class BatteryUPSSwitch(CoordinatorEntity, SwitchEntity):
         finally:
             await self.coordinator.async_request_refresh()
             self._state = None  # Reset override after refresh
+
+    @property
+    def device_info(self) -> dict:
+        """Inherit device metadata from the main system entity."""
+        data = self.coordinator.data
+        return {
+            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
+            "name": "SunPower Maxeon System",
+            "manufacturer": "SunPower",
+            "model": data.get("inverter_model", "Unknown"),
+            "sw_version": data.get("inv_version"),
+        }
+
+    @property
+    def icon(self) -> str:
+        """Return the icon based on whether the UPS is enabled or not."""
+        if self.is_on:
+            return "mdi:battery"  # Icon when UPS is enabled
+        else:
+            return "mdi:battery-off"  # Icon when UPS is disabled
