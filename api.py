@@ -79,3 +79,23 @@ class AsyncConfigEntryAuth:
         except Exception as err:
             _LOGGER.error("Failed to fetch system power data: %s", err)
             return POWER_METER
+
+    async def async_get_system_energy(self, system_sn: str) -> dict:
+        """Fetch system energy data from the energy meter endpoint."""
+        token = await self.async_get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/energy_meter"
+    
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Energy data for system {system_sn} not found, returning dummy data")
+                return ENERGY_METER  # This should be defined similarly to POWER_METER
+            raise
+        except Exception as err:
+            _LOGGER.error("Failed to fetch system energy data: %s", err)
+            return ENERGY_METER
+
