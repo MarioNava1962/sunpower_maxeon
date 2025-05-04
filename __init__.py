@@ -15,7 +15,8 @@ from .coordinator import SunPowerCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-_PLATFORMS: list[Platform] = [Platform.SENSOR]
+# Add SWITCH platform for UPS control
+_PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH]
 
 type SunPowerConfigEntry = ConfigEntry[SunPowerCoordinator]
 

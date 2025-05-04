@@ -99,3 +99,21 @@ class AsyncConfigEntryAuth:
             _LOGGER.error("Failed to fetch system energy data: %s", err)
             return ENERGY_METER
 
+    async def get_battery_ups_state(self, system_sn: str) -> dict:
+        """Fetch the current UPS battery state (enabled/disabled)."""
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
+        headers = {"Authorization": f"Bearer {self._token}"}
+        async with self._session.get(url, headers=headers) as resp:
+            resp.raise_for_status()
+            return await resp.json()
+
+    async def set_battery_ups_state(self, system_sn: str, enable: bool) -> None:
+        """Set the UPS battery enabled state."""
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
+        headers = {
+            "Authorization": f"Bearer {self._token}",
+            "Content-Type": "application/json"
+        }
+        payload = {"enable": enable}
+        async with self._session.put(url, headers=headers, json=payload) as resp:
+            resp.raise_for_status()

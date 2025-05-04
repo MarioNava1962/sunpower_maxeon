@@ -1,60 +1,60 @@
 rules:
   # Bronze
-  action-setup: todo
-  appropriate-polling: todo
-  brands: todo
-  common-modules: todo
-  config-flow-test-coverage: todo
-  config-flow: todo
-  dependency-transparency: todo
-  docs-actions: todo
-  docs-high-level-description: todo
-  docs-installation-instructions: todo
-  docs-removal-instructions: todo
-  entity-event-setup: todo
-  entity-unique-id: todo
-  has-entity-name: todo
-  runtime-data: todo
-  test-before-configure: todo
-  test-before-setup: todo
-  unique-config-entry: todo
+  action-setup: true
+  appropriate-polling: true
+  brands: true
+  common-modules: true
+  config-flow-test-coverage: false  # unless you wrote tests
+  config-flow: true
+  dependency-transparency: true
+  docs-actions: true
+  docs-high-level-description: true
+  docs-installation-instructions: true
+  docs-removal-instructions: true
+  entity-event-setup: false  # not implemented
+  entity-unique-id: true
+  has-entity-name: true
+  runtime-data: true
+  test-before-configure: false  # unless explicitly done
+  test-before-setup: false
+  unique-config-entry: true
 
   # Silver
-  action-exceptions: todo
-  config-entry-unloading: todo
-  docs-configuration-parameters: todo
-  docs-installation-parameters: todo
-  entity-unavailable: todo
-  integration-owner: todo
-  log-when-unavailable: todo
-  parallel-updates: todo
-  reauthentication-flow: todo
-  test-coverage: todo
+  action-exceptions: true
+  config-entry-unloading: true
+  docs-configuration-parameters: true
+  docs-installation-parameters: true
+  entity-unavailable: true  # if coordinator handles fallback states
+  integration-owner: true
+  log-when-unavailable: true
+  parallel-updates: true  # if coordinator async-fetches all at once
+  reauthentication-flow: true
+  test-coverage: false  # unless you’ve written tests
 
   # Gold
-  devices: todo
-  diagnostics: todo
-  discovery-update-info: todo
-  discovery: todo
-  docs-data-update: todo
-  docs-examples: todo
-  docs-known-limitations: todo
-  docs-supported-devices: todo
-  docs-supported-functions: todo
-  docs-troubleshooting: todo
-  docs-use-cases: todo
-  dynamic-devices: todo
-  entity-category: todo
-  entity-device-class: todo
-  entity-disabled-by-default: todo
-  entity-translations: todo
-  exception-translations: todo
-  icon-translations: todo
-  reconfiguration-flow: todo
-  repair-issues: todo
-  stale-devices: todo
+  devices: true  # if using device_info in entities
+  diagnostics: false  # not yet implemented
+  discovery-update-info: false
+  discovery: false
+  docs-data-update: true
+  docs-examples: true
+  docs-known-limitations: true
+  docs-supported-devices: true
+  docs-supported-functions: true
+  docs-troubleshooting: true
+  docs-use-cases: true
+  dynamic-devices: false
+  entity-category: true  # if defined in switch/sensor
+  entity-device-class: false  # unless using device_class
+  entity-disabled-by-default: false
+  entity-translations: false
+  exception-translations: false
+  icon-translations: false
+  reconfiguration-flow: false
+  repair-issues: false
+  stale-devices: false
 
   # Platinum
-  async-dependency: todo
-  inject-websession: todo
-  strict-typing: todo
+  async-dependency: true  # if everything uses aiohttp/async
+  inject-websession: true
+  strict-typing: true  # if you've used type hints properly

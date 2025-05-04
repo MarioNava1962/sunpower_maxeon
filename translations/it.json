@@ -1,0 +1,39 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "L'account è già configurato",
+            "already_in_progress": "La configurazione è già in corso",
+            "authorize_url_timeout": "Timeout durante la generazione dell'URL di autorizzazione.",
+            "missing_configuration": "Il componente non è configurato. Si prega di seguire la documentazione.",
+            "no_url_available": "Nessun URL disponibile. Per informazioni su questo errore, [consulta la sezione di aiuto]({docs_url})",
+            "oauth_error": "Dati del token non validi ricevuti.",
+            "oauth_failed": "Errore durante l'ottenimento del token di accesso.",
+            "oauth_timeout": "Timeout durante la risoluzione del token OAuth.",
+            "oauth_unauthorized": "Errore di autorizzazione OAuth durante l'ottenimento del token di accesso.",
+            "user_rejected_authorize": "Collegamento dell'account rifiutato: {error}"
+        },
+        "create_entry": {
+            "default": "Autenticazione avvenuta con successo"
+        },
+        "step": {
+            "pick_implementation": {
+                "title": "Scegli il metodo di autenticazione"
+            }
+        }
+    },
+    "entity": {
+        "switch": {
+            "battery_ups": {
+                "name": "UPS della batteria",
+                "state_on": "Abilitato",
+                "state_off": "Disabilitato"
+            }
+        },
+        "sensor": {
+            "battery_ups_status": {
+                "name": "Stato UPS della batteria",
+                "unit_of_measurement": "Stato"
+            }
+        }
+    }
+}
