@@ -161,6 +161,13 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     @property
     def icon(self) -> str:
         """Return a suitable MDI icon for the sensor."""
+        if self._key == "soc":
+            if self.native_value is None:
+                return "mdi:battery-unknown"
+            soc = max(0, min(100, int(self.native_value)))
+            icon_level = (soc // 10) * 10  # Round down to nearest 10
+            return f"mdi:battery-{icon_level}" if soc < 100 else "mdi:battery"
+    
         if "battery" in self._key:
             return "mdi:battery"
         elif "pv_power" in self._key or "inverter" in self._key:
@@ -177,13 +184,6 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             return "mdi:home-lightning-bolt"
         elif self._key == "p_storage":
             return "mdi:battery"
-        if self._key == "soc":
-            if self.native_value is None:
-                return "mdi:battery-unknown"
-            soc = max(0, min(100, int(self.native_value)))
-            icon_level = (soc // 10) * 10  # Round down to nearest 10
-            return f"mdi:battery-{icon_level}" if soc < 100 else "mdi:battery"        
-        return "mdi:battery"
         elif self._key == "e_grid_import":
             return "mdi:transmission-tower-import"
         elif self._key == "e_grid_export":
@@ -199,4 +199,3 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         elif self._key.startswith("e_"):
             return "mdi:lightning-bolt-circle"
         return "mdi:gauge"
-
