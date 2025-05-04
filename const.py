@@ -65,7 +65,7 @@ POWER_METER = {
   "p_pv": 1992,
   "p_grid": -1126,
   "p_storage": 0,
-  "soc": 100,
+  "soc": 75,
   "p_consumption": 866,
   "status": "dummy_data"
 }
