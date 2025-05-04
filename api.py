@@ -2,7 +2,7 @@ import logging
 from aiohttp import ClientSession, ClientResponseError
 from homeassistant.helpers import config_entry_oauth2_flow
 
-from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER
+from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER, ENERGY_METER
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,19 +101,21 @@ class AsyncConfigEntryAuth:
 
     async def get_battery_ups_state(self, system_sn: str) -> dict:
         """Fetch the current UPS battery state (enabled/disabled)."""
+        token = await self.async_get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
         url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
-        headers = {"Authorization": f"Bearer {self._token}"}
-        async with self._session.get(url, headers=headers) as resp:
+        async with self._websession.get(url, headers=headers) as resp:
             resp.raise_for_status()
             return await resp.json()
 
     async def set_battery_ups_state(self, system_sn: str, enable: bool) -> None:
         """Set the UPS battery enabled state."""
-        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
+        token = await self.async_get_access_token()
         headers = {
-            "Authorization": f"Bearer {self._token}",
+            "Authorization": f"Bearer {token}",
             "Content-Type": "application/json"
         }
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
         payload = {"enable": enable}
-        async with self._session.put(url, headers=headers, json=payload) as resp:
+        async with self._websession.put(url, headers=headers, json=payload) as resp:
             resp.raise_for_status()
