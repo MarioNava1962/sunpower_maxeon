@@ -104,9 +104,20 @@ class AsyncConfigEntryAuth:
         token = await self.async_get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
         url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
-        async with self._websession.get(url, headers=headers) as resp:
-            resp.raise_for_status()
-            return await resp.json()
+
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Battery UPS data for system {system_sn} not found, returning default")
+                return {"enable": False}
+            raise
+        except Exception as err:
+            _LOGGER.error("Failed to fetch battery UPS state: %s", err)
+            return {"enable": False}
+
 
     async def set_battery_ups_state(self, system_sn: str, enable: bool) -> None:
         """Set the UPS battery enabled state."""
@@ -115,7 +126,16 @@ class AsyncConfigEntryAuth:
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json"
         }
-        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
         payload = {"enable": enable}
-        async with self._websession.put(url, headers=headers, json=payload) as resp:
-            resp.raise_for_status()
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/battery_ups"
+
+        try:
+            async with self._websession.put(url, headers=headers, json=payload) as resp:
+                resp.raise_for_status()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Cannot update battery UPS state for {system_sn}: not found")
+            else:
+                raise
+        except Exception as err:
+            _LOGGER.error("Failed to update battery UPS state: %s", err)
