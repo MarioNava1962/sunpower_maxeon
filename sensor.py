@@ -33,11 +33,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SunPowerDetailSensor(coordinator, "battery_usable_capacity", "Battery Usable Capacity", "kWh"),
         SunPowerDetailSensor(coordinator, "feedin_threshold", "Feed-In Threshold", "%"),
 
-        # Real-time power sensors
-        SunPowerDetailSensor(coordinator, "production_kw", "PV Production", "kW"),
-        SunPowerDetailSensor(coordinator, "consumption_kw", "Home Consumption", "kW"),
-        SunPowerDetailSensor(coordinator, "feedin_kw", "Grid Feed-In", "kW"),
-        SunPowerDetailSensor(coordinator, "self_consumption_kw", "Self Consumption", "kW"),
+        #Power Meter Sensors
+        SunPowerDetailSensor(coordinator, "p_pv", "PV Production (Real-Time)", "W"),
+        SunPowerDetailSensor(coordinator, "p_grid", "Grid Power Flow", "W"),
+        SunPowerDetailSensor(coordinator, "p_storage", "Battery Power Flow", "W"),
+        SunPowerDetailSensor(coordinator, "p_consumption", "Home Consumption (Real-Time)", "W"),
+        SunPowerDetailSensor(coordinator, "soc", "Battery State of Charge", "%"),
+
     ]
 
     async_add_entities(entities, True)
@@ -109,9 +111,16 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         elif key == "feedin_threshold":
             self._attr_device_class = SensorDeviceClass.POWER_FACTOR
             self._attr_state_class = SensorStateClass.MEASUREMENT
-        elif key in ["production_kw", "consumption_kw", "feedin_kw", "self_consumption_kw"]:
+        elif key in [
+            "production_kw", "consumption_kw", "feedin_kw", "self_consumption_kw",
+            "p_pv", "p_consumption", "p_grid", "p_storage"
+        ]:
             self._attr_device_class = SensorDeviceClass.POWER
             self._attr_state_class = SensorStateClass.MEASUREMENT
+        elif key == "soc":
+            self._attr_device_class = SensorDeviceClass.BATTERY
+            self._attr_state_class = SensorStateClass.MEASUREMENT
+            self._attr_native_unit_of_measurement = "%"
 
     @property
     def native_value(self) -> Optional[float | int | str]:
@@ -144,12 +153,17 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             return "mdi:solar-power"
         elif "threshold" in self._key:
             return "mdi:percent"
-        elif self._key == "production_kw":
+        elif self._key in ("production_kw", "p_pv"):
             return "mdi:solar-panel"
-        elif self._key == "consumption_kw":
+        elif self._key in ("consumption_kw", "p_consumption"):
             return "mdi:transmission-tower"
-        elif self._key == "feedin_kw":
+        elif self._key in ("feedin_kw", "p_grid"):
             return "mdi:transmission-tower-export"
         elif self._key == "self_consumption_kw":
             return "mdi:home-lightning-bolt"
+        elif self._key == "p_storage":
+            return "mdi:battery-arrow-up-down"
+        elif self._key == "soc":
+            return "mdi:battery"
         return "mdi:gauge"
+
