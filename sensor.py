@@ -40,6 +40,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SunPowerDetailSensor(coordinator, "p_consumption", "Home Consumption (Real-Time)", "W"),
         SunPowerDetailSensor(coordinator, "soc", "Battery State of Charge", "%"),
 
+        #Energy Meter Sensors
+        SunPowerDetailSensor(coordinator, "e_pv_generation", "Total PV Generation", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_storage_charge", "Total Battery Charge", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_storage_discharge", "Total Battery Discharge", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_grid_import", "Total Grid Import", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_grid_export", "Total Grid Export", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_consumption", "Total Home Consumption", "Wh"),
+
     ]
 
     async_add_entities(entities, True)
@@ -121,6 +129,12 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             self._attr_device_class = SensorDeviceClass.BATTERY
             self._attr_state_class = SensorStateClass.MEASUREMENT
             self._attr_native_unit_of_measurement = "%"
+        elif key in [
+            "e_pv_generation", "e_storage_charge", "e_storage_discharge",
+            "e_grid_import", "e_grid_export", "e_consumption"
+        ]:
+            self._attr_device_class = SensorDeviceClass.ENERGY
+            self._attr_state_class = SensorStateClass.TOTAL_INCREASING
 
     @property
     def native_value(self) -> Optional[float | int | str]:
@@ -165,5 +179,19 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             return "mdi:battery"
         elif self._key == "soc":
             return "mdi:battery"
+        elif self._key == "e_grid_import":
+            return "mdi:transmission-tower-import"
+        elif self._key == "e_grid_export":
+            return "mdi:transmission-tower-export"
+        elif self._key == "e_consumption":
+            return "mdi:home-lightning-bolt"
+        elif self._key == "e_pv_generation":
+            return "mdi:solar-panel"
+        elif self._key == "e_storage_charge":
+            return "mdi:battery-arrow-up"
+        elif self._key == "e_storage_discharge":
+            return "mdi:battery-arrow-down"
+        elif self._key.startswith("e_"):
+            return "mdi:lightning-bolt-circle"
         return "mdi:gauge"
 
