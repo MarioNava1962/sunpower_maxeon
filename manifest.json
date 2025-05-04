@@ -1,7 +1,7 @@
 {
   "domain": "sunpower_maxeon",
   "name": "SunPower Maxeon",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "documentation": "https://api.sunpower.maxeon.com/docs/",
   "requirements": [
     "aiohttp>=3.7.0"
@@ -9,7 +9,7 @@
   "dependencies": [
     "application_credentials"
   ],
-  "codeowners": ["@geims12"],
+  "codeowners": [],
   "config_flow": true,
   "iot_class": "cloud_polling"
 }
