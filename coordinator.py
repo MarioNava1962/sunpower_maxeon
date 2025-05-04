@@ -27,26 +27,29 @@ class SunPowerCoordinator(DataUpdateCoordinator):
         """Fetch and merge system, detail, power, and energy data from the API."""
         try:
             systems_data = await self.api.async_get_systems()
-
+    
             if not systems_data.get("systems"):
                 _LOGGER.warning("No systems returned, using dummy system details")
                 return SYSTEM_DETAILS["default"]
-
+    
             system = systems_data["systems"][0]
             system_sn = system.get("system_sn")
-
+    
             if not system_sn:
                 _LOGGER.warning("Missing system_sn in response, using dummy system details")
                 return SYSTEM_DETAILS["default"]
-
+            
+            # Fetch additional data
             details_data = await self.api.async_get_system_details(system_sn)
             power_data = await self.api.async_get_system_power(system_sn)
             energy_data = await self.api.async_get_system_energy(system_sn)
-
-            # Merge all datasets into a single dictionary
+    
+            # Merge the dictionaries, keeping system_sn from the system dictionary
             merged = {**system, **details_data, **power_data, **energy_data}
+            merged["system_sn"] = system_sn  # Ensure system_sn comes from the system dictionary
+    
             return merged
-
+    
         except Exception as err:
             _LOGGER.error("Failed to fetch system data: %s", err)
             return {**SYSTEM_DETAILS["default"], **POWER_METER, **ENERGY_METER}
