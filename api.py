@@ -2,7 +2,7 @@ import logging
 from aiohttp import ClientSession, ClientResponseError
 from homeassistant.helpers import config_entry_oauth2_flow
 
-from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER, ENERGY_METER
+from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER, ENERGY_METER, CHARGING_SCHEDULE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -139,3 +139,42 @@ class AsyncConfigEntryAuth:
                 raise
         except Exception as err:
             _LOGGER.error("Failed to update battery UPS state: %s", err)
+
+    async def async_get_charging_schedule(self, system_sn: str) -> dict:
+        """Fetch the battery charging schedule for a specific system by serial number."""
+        token = await self.async_get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/charging_schedule"
+
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Charging schedule for system {system_sn} not found, returning default schedule")
+                return CHARGING_SCHEDULE
+            raise
+        except Exception as err:
+            _LOGGER.error("Failed to fetch charging schedule: %s", err)
+            return CHARGING_SCHEDULE
+    
+    async def async_set_charging_schedule(self, system_sn: str, schedule: dict) -> None:
+        """Set the battery charging schedule for a specific system by serial number."""
+        token = await self.async_get_access_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/charging_schedule"
+
+        try:
+            async with self._websession.put(url, headers=headers, json=schedule) as resp:
+                resp.raise_for_status()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Cannot update charging schedule for system {system_sn}: not found")
+            else:
+                raise
+        except Exception as err:
+            _LOGGER.error("Failed to update charging schedule: %s", err)
