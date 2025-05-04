@@ -16,8 +16,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class BatteryUPSSwitch(CoordinatorEntity, SwitchEntity):
     def __init__(self, coordinator, system_sn):
         super().__init__(coordinator)
-        self._attr_name = "Backup UPS "
-        self._attr_unique_id = f"{system_sn}_backup_ups"
+        self._attr_name = "Battery UPS Enabled"
+        self._attr_unique_id = f"{system_sn}_battery_ups_enabled"
         self.system_sn = system_sn
         self._state = None
 
