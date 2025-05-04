@@ -162,7 +162,7 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         elif self._key == "self_consumption_kw":
             return "mdi:home-lightning-bolt"
         elif self._key == "p_storage":
-            return "mdi:battery-arrow-up-down"
+            return "mdi:battery"
         elif self._key == "soc":
             return "mdi:battery"
         return "mdi:gauge"
