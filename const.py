@@ -45,8 +45,22 @@ SYSTEM_DETAILS = {
     }
 }
 
+ENERGY_METER = {
+  "system_sn": "default",
+  "timestamp": 1680334973,
+  "e_pv_generation": 7000,
+  "e_storage_charge": 4000,
+  "e_storage_discharge": 6000,
+  "e_grid_import": 1000,
+  "e_grid_export": 3000,
+  "e_consumption": 7000,
+  "status": "dummy_data",
+  "p_max_charge": 5000,
+  "p_max_discharge": 5000
+}
+
 POWER_METER = {
-  "system_sn": "SOD123456789001",
+  "system_sn": "default",
   "timestamp": 1680334973,
   "p_pv": 1992,
   "p_grid": -1126,
