@@ -64,4 +64,5 @@ class SunPowerCoordinator(DataUpdateCoordinator):
                 **POWER_METER,
                 **ENERGY_METER,
                 "battery_ups": {"enable": False},
+                "system_sn": system_sn,
             }
