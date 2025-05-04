@@ -53,5 +53,5 @@ POWER_METER = {
   "p_storage": 0,
   "soc": 100,
   "p_consumption": 866,
-  "status": "normal"
+  "status": "dummy_data"
 }
