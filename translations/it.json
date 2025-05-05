@@ -37,14 +37,17 @@
       },
       "charging": {
         "title": "Programma di Carica",
-        "description": "Configura quando la batteria deve caricarsi e imposta un limite massimo di carica."
-      }
-    },
-    "charging_enable": "Abilita Carica",
-    "charging_start_time_1": "Ora Inizio (Slot 1)",
-    "charging_end_time_1": "Ora Fine (Slot 1)",
-    "charging_start_time_2": "Ora Inizio (Slot 2)",
-    "charging_end_time_2": "Ora Fine (Slot 2)",
-    "charging_max_soc": "Stato di Carica Massimo (%)"
-  }
+        "description": "Configura quando la batteria deve caricarsi e imposta un limite massimo di carica.",
+        "data": {
+                  "charging_enable": "Abilita Carica",
+                  "charging_start_time_1": "Ora Inizio (Slot 1)",
+                  "charging_end_time_1": "Ora Fine (Slot 1)",
+                  "charging_start_time_2": "Ora Inizio (Slot 2)",
+                  "charging_end_time_2": "Ora Fine (Slot 2)",
+                  "charging_max_soc": "Stato di Carica Massimo (%)"
+                  }
+                
+              }
+        }
+    }
 }
