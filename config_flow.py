@@ -106,11 +106,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 _validate_time(user_input[key])
             _validate_max_soc(user_input["max_soc"])
 
-            # Optional: validate logical order of times if required
-
             # Create API client
             websession = async_get_clientsession(hass)
-            oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(hass, self.config_entry)
+            oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(
+                hass, self.config_entry
+            )
             api = AsyncConfigEntryAuth(websession, oauth_session)
             system_sn = self.config_entry.data["system_sn"]
 
@@ -147,11 +147,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema({
                 vol.Required("enable", default=True): bool,
-                vol.Required("start_time_1", default="14:00"): _validate_time,
-                vol.Required("end_time_1", default="16:00"): _validate_time,
-                vol.Required("start_time_2", default="14:00"): _validate_time,
-                vol.Required("end_time_2", default="16:00"): _validate_time,
-                vol.Required("max_soc", default=95): _validate_max_soc,
+                vol.Required("start_time_1", default="14:00"): vol.All(str, _validate_time),
+                vol.Required("end_time_1", default="16:00"): vol.All(str, _validate_time),
+                vol.Required("start_time_2", default="14:00"): vol.All(str, _validate_time),
+                vol.Required("end_time_2", default="16:00"): vol.All(str, _validate_time),
+                vol.Required("max_soc", default=95): vol.All(int, _validate_max_soc),
             }),
         )
 
