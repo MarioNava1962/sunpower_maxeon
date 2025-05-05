@@ -1,16 +1,35 @@
 """Config flow for SunPower Maxeon."""
-
+from collections.abc import Mapping
+from typing import Any
 import logging
-
-from homeassistant.helpers import config_entry_oauth2_flow
+import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from collections.abc import Mapping
-from typing import Any
+from homeassistant.helpers import config_entry_oauth2_flow, selector
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+from datetime import datetime
 
 from .const import DOMAIN
+from .api import AsyncConfigEntryAuth
+
+_LOGGER = logging.getLogger(__name__)
+
+def _validate_time(value: str) -> str:
+    """Validate time is in HH:MM 24h format."""
+    try:
+        datetime.strptime(value, "%H:%M")
+        return value
+    except ValueError:
+        raise vol.Invalid("Time must be in HH:MM format (24-hour)")
+
+def _validate_max_soc(value: int) -> int:
+    """Validate max SoC is between 0 and 100."""
+    if not 0 <= value <= 100:
+        raise vol.Invalid("Max SoC must be between 0 and 100")
+    return value
 
 
 class OAuth2FlowHandler(
@@ -55,11 +74,74 @@ class OAuth2FlowHandler(
             return self.async_show_form(step_id="reauth_confirm")
         return await self.async_step_user()
 
-    
-
-
     @property
     def logger(self) -> logging.Logger:
         """Return logger."""
-        return logging.getLogger(__name__)
+        return _LOGGER
 
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle options flow for SunPower Maxeon."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        hass = self.hass
+
+        if user_input is not None:
+            # Validate time logic
+            for key in ("start_time_1", "end_time_1", "start_time_2", "end_time_2"):
+                _validate_time(user_input[key])
+            _validate_max_soc(user_input["max_soc"])
+
+            # Optional: validate logical order of times if required
+
+            # Create API client
+            websession = async_get_clientsession(hass)
+            oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(hass, self.config_entry)
+            api = AsyncConfigEntryAuth(websession, oauth_session)
+            system_sn = self.config_entry.data["system_sn"]
+
+            await api.async_set_charging_schedule(system_sn, {
+                "enable": user_input["enable"],
+                "start_time_1": user_input["start_time_1"],
+                "end_time_1": user_input["end_time_1"],
+                "start_time_2": user_input["start_time_2"],
+                "end_time_2": user_input["end_time_2"],
+                "max_soc": user_input["max_soc"]
+            })
+
+            # Show persistent notification
+            hass.async_create_task(
+                hass.services.async_call(
+                    "persistent_notification",
+                    "create",
+                    {
+                        "title": "SunPower Charging Schedule Updated",
+                        "message": (
+                            f"Charging schedule updated:\n\n"
+                            f"Enabled: {user_input['enable']}\n"
+                            f"Start 1: {user_input['start_time_1']} - End 1: {user_input['end_time_1']}\n"
+                            f"Start 2: {user_input['start_time_2']} - End 2: {user_input['end_time_2']}\n"
+                            f"Max SoC: {user_input['max_soc']}%"
+                        ),
+                    },
+                )
+            )
+
+            return self.async_create_entry(title="", data={})
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Required("enable", default=True): bool,
+                vol.Required("start_time_1", default="14:00"): _validate_time,
+                vol.Required("end_time_1", default="16:00"): _validate_time,
+                vol.Required("start_time_2", default="14:00"): _validate_time,
+                vol.Required("end_time_2", default="16:00"): _validate_time,
+                vol.Required("max_soc", default=95): _validate_max_soc,
+            }),
+        )

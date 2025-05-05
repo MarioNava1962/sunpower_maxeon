@@ -24,7 +24,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
         )
 
     async def _async_update_data(self):
-        """Fetch and merge system, detail, power, energy, and battery UPS data from the API."""
+        """Fetch and merge system, detail, power, energy, battery, and charging schedule data from the API."""
         try:
             systems_data = await self.api.async_get_systems()
 
@@ -39,19 +39,20 @@ class SunPowerCoordinator(DataUpdateCoordinator):
                 _LOGGER.warning("Missing system_sn in response, using dummy system details")
                 return SYSTEM_DETAILS["default"]
 
-            # Fetch additional data
+            # Fetch all data
             details_data = await self.api.async_get_system_details(system_sn)
             power_data = await self.api.async_get_system_power(system_sn)
             energy_data = await self.api.async_get_system_energy(system_sn)
             battery_ups_data = await self.api.get_battery_ups_state(system_sn)
+            charging_schedule = await self.api.async_get_charging_schedule(system_sn)
 
-            # Merge the dictionaries, keeping system_sn from the system dictionary
             merged = {
                 **system,
                 **details_data,
                 **power_data,
                 **energy_data,
                 "battery_ups": battery_ups_data,
+                "charging_schedule": charging_schedule,
                 "system_sn": system_sn,
             }
 
@@ -64,5 +65,6 @@ class SunPowerCoordinator(DataUpdateCoordinator):
                 **POWER_METER,
                 **ENERGY_METER,
                 "battery_ups": {"enable": False},
-                "system_sn": system_sn,
+                "charging_schedule": {},  # Fallback default
+                "system_sn": "unknown",
             }

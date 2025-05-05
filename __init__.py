@@ -3,19 +3,18 @@
 from __future__ import annotations
 
 import logging
-from homeassistant.config_entries import ConfigEntry
+
+from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 
 from .const import DOMAIN
 from . import api
 from .coordinator import SunPowerCoordinator
+from .config_flow import OptionsFlowHandler  # 👈 Add this
 
 _LOGGER = logging.getLogger(__name__)
-
-# Add SWITCH platform for UPS control
 _PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH]
 
 type SunPowerConfigEntry = ConfigEntry[SunPowerCoordinator]
@@ -39,10 +38,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except Exception as err:
         raise ConfigEntryNotReady(f"Error connecting to SunPower API: {err}") from err
 
+    # Get system_sn and fetch charging schedule
+    system_sn = coordinator.data.get("system_sn")
+    if system_sn:
+        try:
+            charging_schedule = await auth.async_get_charging_schedule(system_sn)
+            coordinator.data["charging_schedule"] = charging_schedule
+        except Exception as err:
+            _LOGGER.warning("Failed to fetch charging schedule for system %s: %s", system_sn, err)
+    else:
+        _LOGGER.warning("No system_sn found in coordinator data. Skipping charging schedule fetch.")
+
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
     await hass.config_entries.async_forward_entry_setups(entry, _PLATFORMS)
     return True
+
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: SunPowerConfigEntry) -> bool:
@@ -51,3 +62,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: SunPowerConfigEntry) ->
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id, None)
     return unload_ok
+
+
+async def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
+    """Return the options flow handler."""
+    return OptionsFlowHandler(config_entry)

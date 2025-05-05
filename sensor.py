@@ -48,6 +48,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SunPowerDetailSensor(coordinator, "e_grid_export", "Total Grid Export", "Wh"),
         SunPowerDetailSensor(coordinator, "e_consumption", "Total Home Consumption", "Wh"),
 
+        #Charging Schedule Coordinator
+        ChargingScheduleSensor(coordinator),
+
     ]
 
     async_add_entities(entities, True)
@@ -199,3 +202,35 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         elif self._key.startswith("e_"):
             return "mdi:lightning-bolt-circle"
         return "mdi:gauge"
+    
+class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
+    """Sensor for the SunPower charging schedule."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Charging Schedule"
+    _attr_unique_id = "sunpower_charging_schedule"
+    _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
+
+    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+
+    @property
+    def state(self) -> str:
+        schedule = self.schedule
+        return "enabled" if schedule.get("enable") else "disabled"
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        schedule = self.schedule
+        return {
+            "start_time_1": schedule.get("start_time_1"),
+            "end_time_1": schedule.get("end_time_1"),
+            "start_time_2": schedule.get("start_time_2"),
+            "end_time_2": schedule.get("end_time_2"),
+            "max_soc": schedule.get("max_soc"),
+        }
+
+    @property
+    def schedule(self) -> dict:
+        return self.coordinator.data.get("charging_schedule", {})
