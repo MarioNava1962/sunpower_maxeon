@@ -124,65 +124,55 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 "end_time_1": user_input["end_time_1"],
                 "start_time_2": user_input["start_time_2"],
                 "end_time_2": user_input["end_time_2"],
-                "max_soc": user_input["max_soc"]
+                "max_soc": user_input["max_soc"],
             })
             return self.async_create_entry(title="Charging Schedule", data={})
 
         return self.async_show_form(
             step_id="charging",
-            data_schema={
-                "enable": {
-                    "selector": {"boolean": {}},
-                    "default": charging.get("enable", True),
-                    "translation_key": "enable",
-                },
-                "start_time_1": {
-                    "selector": {"time": {}},
-                    "default": charging.get("start_time_1", "14:00"),
-                    "translation_key": "start_time_1",
-                },
-                "end_time_1": {
-                    "selector": {"time": {}},
-                    "default": charging.get("end_time_1", "16:00"),
-                    "translation_key": "end_time_1",
-                },
-                "start_time_2": {
-                    "selector": {"time": {}},
-                    "default": charging.get("start_time_2", "20:00"),
-                    "translation_key": "start_time_2",
-                },
-                "end_time_2": {
-                    "selector": {"time": {}},
-                    "default": charging.get("end_time_2", "22:00"),
-                    "translation_key": "end_time_2",
-                },
-                "max_soc": {
-                    "selector": {
-                        "number": {
-                            "min": 0,
-                            "max": 100,
-                            "step": 1,
-                            "mode": "box",
-                            "unit_of_measurement": "%",
-                        }
-                    },
-                    "default": charging.get("max_soc", 95),
-                    "translation_key": "max_soc",
-                },
-            }
-        )
+            data_schema=vol.Schema({
+                vol.Required(
+                    "enable",
+                    default=charging.get("enable", True),
+                    description={"suggested_value": charging.get("enable", True), "name": "Enable Charging"},
+                ): BooleanSelector(),
 
+                vol.Required(
+                    "start_time_1",
+                    default=charging.get("start_time_1", "14:00"),
+                    description={"name": "Start Time (Slot 1)"},
+                ): TimeSelector(),
 
-    async def async_step_discharging(self, user_input=None):
-        return self.async_show_form(
-            step_id="discharging",
-            data_schema=vol.Schema({}),
-            description_placeholders={"info": "This section is not yet implemented."}
-        )
+                vol.Required(
+                    "end_time_1",
+                    default=charging.get("end_time_1", "16:00"),
+                    description={"name": "End Time (Slot 1)"},
+                ): TimeSelector(),
 
-    async def async_step_export(self, user_input=None):
-        return self.async_show_form(
-            step_id="export",
-            data_schema=vol.Schema({}),
-            description_placeholders={"info": "This section is not yet implemented."}
+                vol.Required(
+                    "start_time_2",
+                    default=charging.get("start_time_2", "20:00"),
+                    description={"name": "Start Time (Slot 2)"},
+                ): TimeSelector(),
+
+                vol.Required(
+                    "end_time_2",
+                    default=charging.get("end_time_2", "22:00"),
+                    description={"name": "End Time (Slot 2)"},
+                ): TimeSelector(),
+
+                vol.Required(
+                    "max_soc",
+                    default=charging.get("max_soc", 95),
+                    description={"name": "Maximum State of Charge (%)"},
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=100,
+                        step=1,
+                        mode="box",
+                        unit_of_measurement="%",
+                    )
+                ),
+            }),
         )
