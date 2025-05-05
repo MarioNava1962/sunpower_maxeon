@@ -100,7 +100,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_charging(self, user_input: dict[str, Any] | None = None):
         """Configure charging schedule."""
-        # Prepare the authenticated API client
         websession = async_get_clientsession(self.hass)
         implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
             self.hass, self.config_entry
@@ -108,15 +107,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
         api = AsyncConfigEntryAuth(websession, oauth_session)
 
-        # Fetch system_sn from the API
         systems = await api.async_get_systems()
         if not systems.get("systems"):
             raise ValueError("No systems returned from API")
+
         system_sn = systems["systems"][0].get("system_sn")
         if not system_sn:
             raise ValueError("System SN missing in API response")
 
-        # Get live config from API
         charging = await api.async_get_charging_schedule(system_sn)
 
         if user_input is not None:
@@ -132,23 +130,48 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="charging",
-            data_schema=vol.Schema({
-                vol.Required("enable", default=charging.get("enable", True)): BooleanSelector(),
-                vol.Required("start_time_1", default=charging.get("start_time_1", "14:00")): TimeSelector(),
-                vol.Required("end_time_1", default=charging.get("end_time_1", "16:00")): TimeSelector(),
-                vol.Required("start_time_2", default=charging.get("start_time_2", "20:00")): TimeSelector(),
-                vol.Required("end_time_2", default=charging.get("end_time_2", "22:00")): TimeSelector(),
-                vol.Required("max_soc", default=charging.get("max_soc", 95)): NumberSelector(
-                    NumberSelectorConfig(
-                        min=0,
-                        max=100,
-                        step=1,
-                        mode=NumberSelectorMode.BOX,
-                        unit_of_measurement="%",
-                    )
-                ),
-            }),
+            data_schema={
+                "enable": {
+                    "selector": {"boolean": {}},
+                    "default": charging.get("enable", True),
+                    "translation_key": "enable",
+                },
+                "start_time_1": {
+                    "selector": {"time": {}},
+                    "default": charging.get("start_time_1", "14:00"),
+                    "translation_key": "start_time_1",
+                },
+                "end_time_1": {
+                    "selector": {"time": {}},
+                    "default": charging.get("end_time_1", "16:00"),
+                    "translation_key": "end_time_1",
+                },
+                "start_time_2": {
+                    "selector": {"time": {}},
+                    "default": charging.get("start_time_2", "20:00"),
+                    "translation_key": "start_time_2",
+                },
+                "end_time_2": {
+                    "selector": {"time": {}},
+                    "default": charging.get("end_time_2", "22:00"),
+                    "translation_key": "end_time_2",
+                },
+                "max_soc": {
+                    "selector": {
+                        "number": {
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "mode": "box",
+                            "unit_of_measurement": "%",
+                        }
+                    },
+                    "default": charging.get("max_soc", 95),
+                    "translation_key": "max_soc",
+                },
+            }
         )
+
 
     async def async_step_discharging(self, user_input=None):
         return self.async_show_form(
