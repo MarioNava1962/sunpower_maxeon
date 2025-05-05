@@ -100,13 +100,21 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_charging(self, user_input: dict[str, Any] | None = None):
         """Configure charging schedule."""
-        hass = self.hass
-        websession = async_get_clientsession(hass)
-        oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(
-            hass, self.config_entry
+        # Prepare the authenticated API client
+        websession = async_get_clientsession(self.hass)
+        implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
+            self.hass, self.config_entry
         )
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
         api = AsyncConfigEntryAuth(websession, oauth_session)
-        system_sn = self.config_entry.data["system_sn"]
+
+        # Fetch system_sn from the API
+        systems = await api.async_get_systems()
+        if not systems.get("systems"):
+            raise ValueError("No systems returned from API")
+        system_sn = systems["systems"][0].get("system_sn")
+        if not system_sn:
+            raise ValueError("System SN missing in API response")
 
         # Get live config from API
         charging = await api.async_get_charging_schedule(system_sn)
