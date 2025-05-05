@@ -87,6 +87,108 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
+            # Save and apply options
+            hass = self.hass
+
+            # Get coordinator data
+            coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id].coordinator
+            charging_schedule = coordinator.data.get("charging_schedule", {})
+
+            websession = async_get_clientsession(hass)
+            oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(
+                hass, self.config_entry
+            )
+            api = AsyncConfigEntryAuth(websession, oauth_session)
+            system_sn = self.config_entry.data["system_sn"]
+
+            await api.async_set_charging_schedule(system_sn, {
+                "enable": user_input["enable"],
+                "start_time_1": user_input["start_time_1"],
+                "end_time_1": user_input["end_time_1"],
+                "start_time_2": user_input["start_time_2"],
+                "end_time_2": user_input["end_time_2"],
+                "max_soc": user_input["max_soc"]
+            })
+
+            # Notify user
+            hass.async_create_task(
+                hass.services.async_call(
+                    "persistent_notification",
+                    "create",
+                    {
+                        "title": "SunPower Charging Schedule Updated",
+                        "message": (
+                            f"Charging schedule updated:\n\n"
+                            f"Enabled: {user_input['enable']}\n"
+                            f"Start 1: {user_input['start_time_1']} - End 1: {user_input['end_time_1']}\n"
+                            f"Start 2: {user_input['start_time_2']} - End 2: {user_input['end_time_2']}\n"
+                            f"Max SoC: {user_input['max_soc']}%"
+                        ),
+                    },
+                )
+            )
+
+            return self.async_create_entry(title="", data={})
+
+        # Fetch current charging schedule from coordinator
+        coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id].coordinator
+        charging_schedule = coordinator.data.get("charging_schedule", {})
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema={
+                "type": "object",
+                "properties": {
+                    "charging_schedule": {
+                        "type": "object",
+                        "properties": {
+                            "enable": {
+                                "type": "boolean",
+                                "title": "Enable Charging Schedule",
+                                "default": charging_schedule.get("enable", True),
+                            },
+                            "start_time_1": {
+                                "type": "string",
+                                "title": "Start Time 1",
+                                "default": charging_schedule.get("start_time_1", "14:00"),
+                            },
+                            "end_time_1": {
+                                "type": "string",
+                                "title": "End Time 1",
+                                "default": charging_schedule.get("end_time_1", "16:00"),
+                            },
+                            "start_time_2": {
+                                "type": "string",
+                                "title": "Start Time 2",
+                                "default": charging_schedule.get("start_time_2", "14:00"),
+                            },
+                            "end_time_2": {
+                                "type": "string",
+                                "title": "End Time 2",
+                                "default": charging_schedule.get("end_time_2", "16:00"),
+                            },
+                            "max_soc": {
+                                "type": "number",
+                                "title": "Max State of Charge",
+                                "default": charging_schedule.get("max_soc", 95),
+                            },
+                        },
+                    }
+                }
+            },
+            description_placeholders={
+                "info": "Configure your battery charging schedule. Time fields must be in HH:MM format."
+            }
+        )
+    """Handle options flow for SunPower Maxeon."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        if user_input is not None:
             hass = self.hass
 
             websession = async_get_clientsession(hass)
