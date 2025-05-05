@@ -78,6 +78,15 @@ class OAuth2FlowHandler(
     def logger(self) -> logging.Logger:
         """Return logger."""
         return _LOGGER
+    
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)
+
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
@@ -145,3 +154,4 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required("max_soc", default=95): _validate_max_soc,
             }),
         )
+
