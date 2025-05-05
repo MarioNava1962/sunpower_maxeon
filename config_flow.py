@@ -131,16 +131,16 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="charging",
             data_schema=vol.Schema({
-                vol.Required("charging_enable", default=charging.get("enable", True)): selector.BooleanSelector(
+                vol.Required("charging_enable", default=charging.get("enable", True)): BooleanSelector(
                     translation_key="charging_enable"
                 ),
-                vol.Required("charging_start_time_1", default=charging.get("start_time_1", "14:00")): selector.TimeSelector(
+                vol.Required("charging_start_time_1", default=charging.get("start_time_1", "14:00")): TimeSelector(
                     translation_key="charging_start_time_1"
                 ),
-                vol.Required("charging_end_time_1", default=charging.get("end_time_1", "16:00")): selector.TimeSelector(
+                vol.Required("charging_end_time_1", default=charging.get("end_time_1", "16:00")): TimeSelector(
                     translation_key="charging_end_time_1"
                 ),
-                vol.Required("charging_start_time_2", default=charging.get("start_time_2", "20:00")): selector.TimeSelector(
+                vol.Required("charging_start_time_2", default=charging.get("start_time_2", "20:00")): TimeSelector(
                     translation_key="charging_start_time_2"
                 ),
                 vol.Required("charging_end_time_2", default=charging.get("end_time_2", "22:00")): TimeSelector(
