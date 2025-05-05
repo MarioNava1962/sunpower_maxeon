@@ -131,34 +131,47 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="charging",
             data_schema=vol.Schema({
-                vol.Required("charging_enable", default=charging.get("enable", True)): BooleanSelector(
-                    translation_key="charging_enable"
-                ),
-                vol.Required("charging_start_time_1", default=charging.get("start_time_1", "14:00")): TimeSelector(
-                    translation_key="charging_start_time_1"
-                ),
-                vol.Required("charging_end_time_1", default=charging.get("end_time_1", "16:00")): TimeSelector(
-                    translation_key="charging_end_time_1"
-                ),
-                vol.Required("charging_start_time_2", default=charging.get("start_time_2", "20:00")): TimeSelector(
-                    translation_key="charging_start_time_2"
-                ),
-                vol.Required("charging_end_time_2", default=charging.get("end_time_2", "22:00")): TimeSelector(
-                    translation_key="charging_end_time_2"
-                ),
-                vol.Required("charging_max_soc", default=charging.get("max_soc", 95)): NumberSelector(
-                    {
-                        "min": 20,
-                        "max": 100,
-                        "unit_of_measurement": "%",
-                        "mode": "slider"
-                    },
-                    translation_key="charging_max_soc"
+                vol.Required(
+                    "enable",
+                    default=charging.get("enable", True)
+                    
+                ): BooleanSelector(),
+
+                vol.Required(
+                    "start_time_1",
+                    default=charging.get("start_time_1", "14:00")
+                    
+                ): TimeSelector(),
+
+                vol.Required(
+                    "end_time_1",
+                    default=charging.get("end_time_1", "16:00")
+                ): TimeSelector(),
+
+                vol.Required(
+                    "start_time_2",
+                    default=charging.get("start_time_2", "20:00")
+                ): TimeSelector(),
+
+                vol.Required(
+                    "end_time_2",
+                    default=charging.get("end_time_2", "22:00")
+                ): TimeSelector(),
+
+                vol.Required(
+                    "max_soc",
+                    default=charging.get("max_soc", 95)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=100,
+                        step=1,
+                        mode="box",
+                        unit_of_measurement="%",
+                    )
                 ),
             }),
-            last_step=False
         )
-
     async def async_step_export(self, user_input: dict[str, Any] | None = None):
         """Configure export limit (placeholder)."""
         # Replace this with actual form logic later
