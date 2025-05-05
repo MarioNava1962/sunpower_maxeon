@@ -1,7 +1,7 @@
 {
     "config": {
       "step": {
-        "init": {
+        "menu": {
           "title": "SunPower Maxeon Configuration",
           "description": "Choose a section below to adjust settings for your system."
         },
@@ -17,17 +17,7 @@
           "title": "Energy Export Settings",
           "description": "Configure energy export behavior to the grid or external systems."
         }
-      },
-      "menu": {
-        "init": "Select a configuration area"
-      },
-      "step_title": {
-        "charging": "Charging",
-        "discharging": "Discharging",
-        "export": "Export",
-        "profile": "Profile",
-        "hub": "Hub"
-      }  
+      }
     },
     "abort": {
       "already_configured": "config.abort.already_configured",

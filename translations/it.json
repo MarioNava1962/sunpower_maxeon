@@ -16,11 +16,16 @@
       "default": "Autenticazione avvenuta con successo"
     },
     "step": {
-      "pick_implementation": {
-        "title": "Scegli il metodo di autenticazione"
+      "menu": {
+        "title": "SunPower Maxeon Configuration",
+        "description": "Scegli la configurazione da modificare"        
       },
-      "init": {
-        "title": "Programma di ricarica",
+      "charging": {
+        "title": "Configurazione programma di ricarica",
+        "description": "Configura il programma di ricarica, compreso l'orario e il limite massimo di carica."
+      },
+      "discharging": {
+        "title": "Configurazione programma di scarica",
         "description": "Configura quando il sistema deve caricare la batteria e il limite massimo di carica.",
         "data": {
           "enable": "Abilita programma di ricarica",
@@ -30,14 +35,6 @@
           "end_time_2": "Ora di fine 2 (HH:MM)",
           "max_soc": "Stato di carica massimo (%)"
         }
-      },
-      "charging": {
-        "title": "Configurazione programma di ricarica",
-        "description": "Configura il programma di ricarica, compreso l'orario e il limite massimo di carica."
-      },
-      "discharging": {
-        "title": "Configurazione programma di scarica",
-        "description": "Configura il programma di scarica della batteria."
       },
       "export": {
         "title": "Impostazioni di esportazione dell'energia",
