@@ -83,29 +83,19 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         self.config_entry = config_entry
 
-    async def async_step_init(self, user_input: dict[str, Any] | None = None):
-        """Initial step: let user choose which section to configure."""
-        if user_input is not None:
-            section = user_input["section"]
-            if section == "charging":
-                return await self.async_step_charging()
-            elif section == "discharging":
-                return await self.async_step_discharging()
-            elif section == "export":
-                return await self.async_step_export()
+    async def async_step_init(self, user_input=None):
+        """Show the menu with configuration sections."""
+        return await self.async_step_menu()
 
-        return self.async_show_form(
-            step_id="init",
-            data_schema=config_entries.vol.Schema({
-                config_entries.vol.Required("section"): config_entries.vol.In({
-                    "charging": "⚡ Charging Schedule",
-                    "discharging": "🔋 Discharging Schedule",
-                    "export": "📤 Export Limit"
-                })
-            }),
-            description_placeholders={
-                "info": "Choose a section to configure"
-            }
+    async def async_step_menu(self, user_input=None):
+        """Menu step to choose what to configure."""
+        return self.async_show_menu(
+            step_id="menu",
+            menu_options={
+                "charging": "⚡ Charging Schedule",
+                "discharging": "🔋 Discharging Schedule",
+                "export": "📤 Export Limit",
+            },
         )
 
     async def async_step_charging(self, user_input: dict[str, Any] | None = None):
@@ -118,6 +108,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         api = AsyncConfigEntryAuth(websession, oauth_session)
         system_sn = self.config_entry.data["system_sn"]
 
+        # Get live config from API
+        charging = await api.async_get_charging_schedule(system_sn)
+
         if user_input is not None:
             await api.async_set_charging_schedule(system_sn, {
                 "enable": user_input["enable"],
@@ -129,18 +122,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             })
             return self.async_create_entry(title="Charging Schedule", data={})
 
-        # Fetch current schedule from API
-        charging_schedule = await api.async_get_charging_schedule(system_sn)
-
         return self.async_show_form(
             step_id="charging",
-            data_schema={
-                "enable": BooleanSelector(),
-                "start_time_1": TimeSelector(),
-                "end_time_1": TimeSelector(),
-                "start_time_2": TimeSelector(),
-                "end_time_2": TimeSelector(),
-                "max_soc": NumberSelector(
+            data_schema=vol.Schema({
+                vol.Required("enable", default=charging.get("enable", True)): BooleanSelector(),
+                vol.Required("start_time_1", default=charging.get("start_time_1", "14:00")): TimeSelector(),
+                vol.Required("end_time_1", default=charging.get("end_time_1", "16:00")): TimeSelector(),
+                vol.Required("start_time_2", default=charging.get("start_time_2", "20:00")): TimeSelector(),
+                vol.Required("end_time_2", default=charging.get("end_time_2", "22:00")): TimeSelector(),
+                vol.Required("max_soc", default=charging.get("max_soc", 95)): NumberSelector(
                     NumberSelectorConfig(
                         min=0,
                         max=100,
@@ -149,36 +139,19 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         unit_of_measurement="%",
                     )
                 ),
-            },
-            defaults={
-                "enable": charging_schedule.get("enable", True),
-                "start_time_1": charging_schedule.get("start_time_1", "14:00"),
-                "end_time_1": charging_schedule.get("end_time_1", "16:00"),
-                "start_time_2": charging_schedule.get("start_time_2", "20:00"),
-                "end_time_2": charging_schedule.get("end_time_2", "22:00"),
-                "max_soc": charging_schedule.get("max_soc", 95),
-            },
-            description_placeholders={
-                "info": "Configure your battery charging schedule. Time fields must be in HH:MM format."
-            }
-        )
-    
-    async def async_step_discharging(self, user_input: dict[str, Any] | None = None):
-        """Placeholder for discharging schedule."""
-        return self.async_show_form(
-            step_id="discharging",
-            data_schema={},
-            description_placeholders={
-                "info": "This section is not yet implemented."
-            }
+            }),
         )
 
-    async def async_step_export(self, user_input: dict[str, Any] | None = None):
-        """Placeholder for export limit."""
+    async def async_step_discharging(self, user_input=None):
+        return self.async_show_form(
+            step_id="discharging",
+            data_schema=vol.Schema({}),
+            description_placeholders={"info": "This section is not yet implemented."}
+        )
+
+    async def async_step_export(self, user_input=None):
         return self.async_show_form(
             step_id="export",
-            data_schema={},
-            description_placeholders={
-                "info": "This section is not yet implemented."
-            }
+            data_schema=vol.Schema({}),
+            description_placeholders={"info": "This section is not yet implemented."}
         )
