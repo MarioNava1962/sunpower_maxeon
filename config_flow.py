@@ -34,9 +34,6 @@ class MaxSoCValidator:
         return value
 
 
-TIME_VALIDATOR = vol.All(str, TimeStrValidator())
-SOC_VALIDATOR = vol.All(int, MaxSoCValidator())
-
 
 class OAuth2FlowHandler(
     config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN
@@ -108,8 +105,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             # Runtime validation
             for key in ("start_time_1", "end_time_1", "start_time_2", "end_time_2"):
-                TIME_VALIDATOR(user_input[key])
-            SOC_VALIDATOR(user_input["max_soc"])
+                TimeStrValidator()(user_input[key])  # This calls the __call__ method of TimeStrValidator
+            MaxSoCValidator()(user_input["max_soc"])
 
             # Create API client
             websession = async_get_clientsession(hass)
@@ -152,10 +149,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema({
                 vol.Required("enable", default=True): bool,
-                vol.Required("start_time_1", default="14:00"): TIME_VALIDATOR,
-                vol.Required("end_time_1", default="16:00"): TIME_VALIDATOR,
-                vol.Required("start_time_2", default="14:00"): TIME_VALIDATOR,
-                vol.Required("end_time_2", default="16:00"): TIME_VALIDATOR,
-                vol.Required("max_soc", default=95): SOC_VALIDATOR,
+                vol.Required("start_time_1", default="14:00"): vol.All(str, TimeStrValidator()),
+                vol.Required("end_time_1", default="16:00"): vol.All(str, TimeStrValidator()),
+                vol.Required("start_time_2", default="14:00"): vol.All(str, TimeStrValidator()),
+                vol.Required("end_time_2", default="16:00"): vol.All(str, TimeStrValidator()),
+                vol.Required("max_soc", default=95): vol.All(int, MaxSoCValidator()),
             }),
         )
+
