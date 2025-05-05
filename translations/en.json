@@ -1,5 +1,5 @@
 {
-  "config": {
+  "options": {
     "step": {
       "menu": {
         "title": "SunPower Maxeon Configuration",

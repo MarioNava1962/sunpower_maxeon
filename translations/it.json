@@ -14,11 +14,14 @@
     },
     "create_entry": {
       "default": "Autenticazione avvenuta con successo"
-    },
+    }
+  },
+
+  "options": {
     "step": {
       "menu": {
         "title": "SunPower Maxeon Configuration",
-        "description": "Scegli la configurazione da modificare"        
+        "description": "Scegli la configurazione da modificare"
       },
       "charging": {
         "title": "Configurazione programma di ricarica",
