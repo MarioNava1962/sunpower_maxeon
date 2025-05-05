@@ -1,21 +1,33 @@
 {
-  "config": {
-    "step": {
-      "pick_implementation": {
-        "title": "config.step.pick_implementation.title"
-      },
-      "init": {
-        "title": "Battery Charging Schedule",
-        "description": "Set when your battery should charge and the maximum state of charge. All times are in 24-hour format.",
-        "data": {
-          "enable": "Enable Schedule",
-          "start_time_1": "Start Time 1",
-          "end_time_1": "End Time 1",
-          "start_time_2": "Start Time 2",
-          "end_time_2": "End Time 2",
-          "max_soc": "Max State of Charge (%)"
+    "config": {
+      "step": {
+        "init": {
+          "title": "SunPower Maxeon Configuration",
+          "description": "Choose a section below to adjust settings for your system."
+        },
+        "charging": {
+          "title": "Charging Schedule Configuration",
+          "description": "Adjust your battery's charging schedule, including time slots and maximum SoC."
+        },
+        "discharging": {
+          "title": "Discharging Schedule Configuration",
+          "description": "Configure how and when the battery should discharge."
+        },
+        "export": {
+          "title": "Energy Export Settings",
+          "description": "Configure energy export behavior to the grid or external systems."
         }
-      }
+      },
+      "menu": {
+        "init": "Select a configuration area"
+      },
+      "step_title": {
+        "charging": "Charging",
+        "discharging": "Discharging",
+        "export": "Export",
+        "profile": "Profile",
+        "hub": "Hub"
+      }  
     },
     "abort": {
       "already_configured": "config.abort.already_configured",
@@ -32,5 +44,5 @@
     "create_entry": {
       "default": "config.create_entry.default"
     }
-  }
+  
 }

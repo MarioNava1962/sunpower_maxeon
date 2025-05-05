@@ -30,6 +30,18 @@
           "end_time_2": "Ora di fine 2 (HH:MM)",
           "max_soc": "Stato di carica massimo (%)"
         }
+      },
+      "charging": {
+        "title": "Configurazione programma di ricarica",
+        "description": "Configura il programma di ricarica, compreso l'orario e il limite massimo di carica."
+      },
+      "discharging": {
+        "title": "Configurazione programma di scarica",
+        "description": "Configura il programma di scarica della batteria."
+      },
+      "export": {
+        "title": "Impostazioni di esportazione dell'energia",
+        "description": "Configura il comportamento dell'esportazione dell'energia verso la rete o sistemi esterni."
       }
     }
   },

@@ -1,24 +1,48 @@
 {
   "config": {
-    "abort": {
-      "already_configured": "Account is already configured",
-      "already_in_progress": "Configuration flow is already in progress",
-      "authorize_url_timeout": "Timeout generating authorize URL.",
-      "missing_configuration": "The component is not configured. Please follow the documentation.",
-      "no_url_available": "No URL available. For information about this error, [check the help section]({docs_url})",
-      "oauth_error": "Received invalid token data.",
-      "oauth_failed": "Error while obtaining access token.",
-      "oauth_timeout": "Timeout resolving OAuth token.",
-      "oauth_unauthorized": "OAuth authorization error while obtaining access token.",
-      "user_rejected_authorize": "Account linking rejected: {error}"
-    },
-    "create_entry": {
-      "default": "Successfully authenticated"
-    },
     "step": {
-      "pick_implementation": {
-        "title": "Pick authentication method"
+      "init": {
+        "title": "SunPower Maxeon Configuration",
+        "description": "Choose a section below to adjust settings for your system."
+      },
+      "charging": {
+        "title": "Charging Schedule Configuration",
+        "description": "Adjust your battery's charging schedule, including time slots and maximum SoC."
+      },
+      "discharging": {
+        "title": "Discharging Schedule Configuration",
+        "description": "Configure how and when the battery should discharge."
+      },
+      "export": {
+        "title": "Energy Export Settings",
+        "description": "Configure energy export behavior to the grid or external systems."
       }
-    }
+    },
+    "menu": {
+      "init": "Select a configuration area"
+    },
+    "step_title": {
+      "charging": "Charging",
+      "discharging": "Discharging",
+      "export": "Export",
+      "profile": "Profile",
+      "hub": "Hub"
+    }  
+  },
+  "abort": {
+    "already_configured": "config.abort.already_configured",
+    "already_in_progress": "config.abort.already_in_progress",
+    "oauth_error": "config.abort.oauth_error",
+    "oauth_failed": "config.abort.oauth_failed",
+    "oauth_timeout": "config.abort.oauth_timeout",
+    "oauth_unauthorized": "config.abort.oauth_unauthorized",
+    "missing_configuration": "config.abort.missing_configuration",
+    "authorize_url_timeout": "config.abort.authorize_url_timeout",
+    "no_url_available": "config.abort.no_url_available",
+    "user_rejected_authorize": "config.abort.user_rejected_authorize"
+  },
+  "create_entry": {
+    "default": "config.create_entry.default"
   }
+
 }
