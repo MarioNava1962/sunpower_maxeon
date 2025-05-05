@@ -17,24 +17,6 @@ from .api import AsyncConfigEntryAuth
 
 _LOGGER = logging.getLogger(__name__)
 
-
-class TimeStrValidator:
-    def __call__(self, value: str) -> str:
-        try:
-            datetime.strptime(value, "%H:%M")
-        except ValueError:
-            raise vol.Invalid("Time must be in HH:MM format (24-hour)")
-        return value
-
-
-class MaxSoCValidator:
-    def __call__(self, value: int) -> int:
-        if not 0 <= value <= 100:
-            raise vol.Invalid("Max SoC must be between 0 and 100")
-        return value
-
-
-
 class OAuth2FlowHandler(
     config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN
 ):
@@ -103,11 +85,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         hass = self.hass
 
         if user_input is not None:
-            # Runtime validation
-            for key in ("start_time_1", "end_time_1", "start_time_2", "end_time_2"):
-                TimeStrValidator()(user_input[key])  # This calls the __call__ method of TimeStrValidator
-            MaxSoCValidator()(user_input["max_soc"])
-
             # Create API client
             websession = async_get_clientsession(hass)
             oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(
@@ -149,11 +126,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema({
                 vol.Required("enable", default=True): bool,
-                vol.Required("start_time_1", default="14:00"): vol.All(str, TimeStrValidator()),
-                vol.Required("end_time_1", default="16:00"): vol.All(str, TimeStrValidator()),
-                vol.Required("start_time_2", default="14:00"): vol.All(str, TimeStrValidator()),
-                vol.Required("end_time_2", default="16:00"): vol.All(str, TimeStrValidator()),
-                vol.Required("max_soc", default=95): vol.All(int, MaxSoCValidator()),
+                vol.Required("start_time_1", default="14:00"): str,
+                vol.Required("end_time_1", default="16:00"): str,
+                vol.Required("start_time_2", default="14:00"): str,
+                vol.Required("end_time_2", default="16:00"): str,
+                vol.Required("max_soc", default=95): int,
             }),
         )
-
