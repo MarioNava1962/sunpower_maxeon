@@ -8,7 +8,7 @@
       },
       "reauth_confirm": {
         "title": "Autenticazione necessaria",
-        "description": "Autenticati nuovamente per continuare a utilizzare l'integrazione SunPower Maxeon."
+        "description": "Per favore, esegui nuovamente l'autenticazione per continuare a utilizzare l'integrazione SunPower Maxeon."
       }
     },
     "error": {
@@ -18,7 +18,7 @@
     },
     "abort": {
       "single_instance_allowed": "È consentita solo un'istanza dell'integrazione SunPower Maxeon.",
-      "reauth_successful": "Autenticazione riuscita con successo."
+      "reauth_successful": "Autenticazione eseguita con successo."
     }
   },
   "options": {
@@ -27,7 +27,7 @@
         "title": "Opzioni SunPower Maxeon"
       },
       "menu": {
-        "title": "Configura",
+        "title": "Configurazione",
         "description": "Scegli una categoria da configurare.",
         "charging": "⚡ Programma di Carica",
         "discharging": "🔋 Programma di Scarica",
@@ -35,36 +35,14 @@
       },
       "charging": {
         "title": "Programma di Carica",
-        "description": "Imposta quando la batteria deve caricarsi e definisci una carica massima."
+        "description": "Configura quando la batteria deve caricarsi e imposta un limite massimo di carica."
       }
     },
-    "form": {
-      "charging": {
-        "enable": {
-          "name": "Abilita Carica",
-          "description": "Attiva o disattiva il programma di carica programmata."
-        },
-        "start_time_1": {
-          "name": "Ora Inizio (Fascia 1)",
-          "description": "Ora in cui inizia la prima fascia di carica."
-        },
-        "end_time_1": {
-          "name": "Ora Fine (Fascia 1)",
-          "description": "Ora in cui termina la prima fascia di carica."
-        },
-        "start_time_2": {
-          "name": "Ora Inizio (Fascia 2)",
-          "description": "Ora in cui inizia la seconda fascia di carica."
-        },
-        "end_time_2": {
-          "name": "Ora Fine (Fascia 2)",
-          "description": "Ora in cui termina la seconda fascia di carica."
-        },
-        "max_soc": {
-          "name": "Stato di Carica Massimo (%)",
-          "description": "La batteria verrà caricata fino a questa percentuale massima durante il periodo programmato."
-        }
-      }
-    }
+    "charging_enable": "Abilita Carica",
+    "charging_start_time_1": "Ora Inizio (Slot 1)",
+    "charging_end_time_1": "Ora Fine (Slot 1)",
+    "charging_start_time_2": "Ora Inizio (Slot 2)",
+    "charging_end_time_2": "Ora Fine (Slot 2)",
+    "charging_max_soc": "Stato di Carica Massimo (%)"
   }
 }

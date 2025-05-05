@@ -92,9 +92,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_menu(
             step_id="menu",
             menu_options={
-                "charging": "⚡ Charging Schedule",
-                "discharging": "🔋 Discharging Schedule",
-                "export": "📤 Export Limit",
+                "charging",
+                "discharging",
+                "export",
             },
         )
 
@@ -134,37 +134,40 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required(
                     "enable",
                     default=charging.get("enable", True),
-                    description={"suggested_value": charging.get("enable", True), "name": "Enable Charging"},
+                    description={
+                        "suggested_value": charging.get("enable", True),
+                        "name": "options_charging_enable"
+                    },
                 ): BooleanSelector(),
 
                 vol.Required(
                     "start_time_1",
                     default=charging.get("start_time_1", "14:00"),
-                    description={"name": "Start Time (Slot 1)"},
+                    description={"name": "options_charging_start_time_1"},
                 ): TimeSelector(),
 
                 vol.Required(
                     "end_time_1",
                     default=charging.get("end_time_1", "16:00"),
-                    description={"name": "End Time (Slot 1)"},
+                    description={"name": "options_charging_end_time_1"},
                 ): TimeSelector(),
 
                 vol.Required(
                     "start_time_2",
                     default=charging.get("start_time_2", "20:00"),
-                    description={"name": "Start Time (Slot 2)"},
+                    description={"name": "options_charging_start_time_2"},
                 ): TimeSelector(),
 
                 vol.Required(
                     "end_time_2",
                     default=charging.get("end_time_2", "22:00"),
-                    description={"name": "End Time (Slot 2)"},
+                    description={"name": "options_charging_end_time_2"},
                 ): TimeSelector(),
 
                 vol.Required(
                     "max_soc",
                     default=charging.get("max_soc", 95),
-                    description={"name": "Maximum State of Charge (%)"},
+                    description={"name": "options_charging_max_soc"},
                 ): NumberSelector(
                     NumberSelectorConfig(
                         min=0,

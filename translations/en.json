@@ -38,33 +38,13 @@
         "description": "Set up when the battery should charge and define a maximum state of charge."
       }
     },
-    "form": {
-      "charging": {
-        "enable": {
-          "name": "Enable Charging",
-          "description": "Toggle whether scheduled charging is active."
-        },
-        "start_time_1": {
-          "name": "Start Time (Slot 1)",
-          "description": "Time when the first charging slot begins."
-        },
-        "end_time_1": {
-          "name": "End Time (Slot 1)",
-          "description": "Time when the first charging slot ends."
-        },
-        "start_time_2": {
-          "name": "Start Time (Slot 2)",
-          "description": "Time when the second charging slot begins."
-        },
-        "end_time_2": {
-          "name": "End Time (Slot 2)",
-          "description": "Time when the second charging slot ends."
-        },
-        "max_soc": {
-          "name": "Maximum State of Charge (%)",
-          "description": "The maximum percentage to which the battery will be charged during the scheduled period."
-        }
-      }
-    }
+    "charging_enable": "Enable Charging",
+    "charging_start_time_1": "Start Time (Slot 1)",
+    "charging_end_time_1": "End Time (Slot 1)",
+    "charging_start_time_2": "Start Time (Slot 2)",
+    "charging_end_time_2": "End Time (Slot 2)",
+    "charging_max_soc": "Maximum State of Charge (%)"
   }
 }
+  
+
