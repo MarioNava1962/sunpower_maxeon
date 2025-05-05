@@ -17,19 +17,25 @@ from .api import AsyncConfigEntryAuth
 
 _LOGGER = logging.getLogger(__name__)
 
-def _validate_time(value: str) -> str:
-    """Validate time is in HH:MM 24h format."""
-    try:
-        datetime.strptime(value, "%H:%M")
-        return value
-    except ValueError:
-        raise vol.Invalid("Time must be in HH:MM format (24-hour)")
 
-def _validate_max_soc(value: int) -> int:
-    """Validate max SoC is between 0 and 100."""
-    if not 0 <= value <= 100:
-        raise vol.Invalid("Max SoC must be between 0 and 100")
-    return value
+class TimeStrValidator:
+    def __call__(self, value: str) -> str:
+        try:
+            datetime.strptime(value, "%H:%M")
+        except ValueError:
+            raise vol.Invalid("Time must be in HH:MM format (24-hour)")
+        return value
+
+
+class MaxSoCValidator:
+    def __call__(self, value: int) -> int:
+        if not 0 <= value <= 100:
+            raise vol.Invalid("Max SoC must be between 0 and 100")
+        return value
+
+
+TIME_VALIDATOR = vol.All(str, TimeStrValidator())
+SOC_VALIDATOR = vol.All(int, MaxSoCValidator())
 
 
 class OAuth2FlowHandler(
@@ -78,7 +84,7 @@ class OAuth2FlowHandler(
     def logger(self) -> logging.Logger:
         """Return logger."""
         return _LOGGER
-    
+
     @staticmethod
     @callback
     def async_get_options_flow(
@@ -86,7 +92,6 @@ class OAuth2FlowHandler(
     ) -> config_entries.OptionsFlow:
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
-
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
@@ -101,10 +106,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         hass = self.hass
 
         if user_input is not None:
-            # Validate time logic
+            # Runtime validation
             for key in ("start_time_1", "end_time_1", "start_time_2", "end_time_2"):
-                _validate_time(user_input[key])
-            _validate_max_soc(user_input["max_soc"])
+                TIME_VALIDATOR(user_input[key])
+            SOC_VALIDATOR(user_input["max_soc"])
 
             # Create API client
             websession = async_get_clientsession(hass)
@@ -147,11 +152,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema({
                 vol.Required("enable", default=True): bool,
-                vol.Required("start_time_1", default="14:00"): vol.All(str, _validate_time),
-                vol.Required("end_time_1", default="16:00"): vol.All(str, _validate_time),
-                vol.Required("start_time_2", default="14:00"): vol.All(str, _validate_time),
-                vol.Required("end_time_2", default="16:00"): vol.All(str, _validate_time),
-                vol.Required("max_soc", default=95): vol.All(int, _validate_max_soc),
+                vol.Required("start_time_1", default="14:00"): TIME_VALIDATOR,
+                vol.Required("end_time_1", default="16:00"): TIME_VALIDATOR,
+                vol.Required("start_time_2", default="14:00"): TIME_VALIDATOR,
+                vol.Required("end_time_2", default="16:00"): TIME_VALIDATOR,
+                vol.Required("max_soc", default=95): SOC_VALIDATOR,
             }),
         )
-
