@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "pick_implementation": {
+        "title": "config.step.pick_implementation.title"
+      }
+    },
+    "abort": {
+      "already_configured": "config.abort.already_configured",
+      "already_in_progress": "config.abort.already_in_progress",
+      "oauth_error": "config.abort.oauth_error",
+      "oauth_failed": "config.abort.oauth_failed",
+      "oauth_timeout": "config.abort.oauth_timeout",
+      "oauth_unauthorized": "config.abort.oauth_unauthorized",
+      "missing_configuration": "config.abort.missing_configuration",
+      "authorize_url_timeout": "config.abort.authorize_url_timeout",
+      "no_url_available": "config.abort.no_url_available",
+      "user_rejected_authorize": "config.abort.user_rejected_authorize"
+    },
+    "create_entry": {
+      "default": "config.create_entry.default"
+    }
+  }
+}
