@@ -3,14 +3,19 @@
     "step": {
       "menu": {
         "title": "SunPower Maxeon Configuration",
-        "description": "Choose a section below to adjust settings for your system."
+        "description": "Choose a section below to adjust settings for your system.",
+        "menu_options": {
+          "charging": "Charging Schedule",
+          "discharging": "Discharging Schedule",
+          "export": "Export Settings"
+        }
       },
       "charging": {
-        "title": "Charging Schedule Configuration",
+        "title": "Charging Schedule",
         "description": "Adjust your battery's charging schedule, including time slots and maximum SoC."
       },
       "discharging": {
-        "title": "Discharging Schedule Configuration",
+        "title": "Discharging Schedule",
         "description": "Configure how and when the battery should discharge."
       },
       "export": {
@@ -34,5 +39,4 @@
   "create_entry": {
     "default": "config.create_entry.default"
   }
-
 }
