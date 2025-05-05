@@ -1,42 +1,70 @@
 {
+  "title": "SunPower Maxeon",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Authenticate with SunPower Maxeon",
+        "description": "Connect your SunPower Maxeon account to Home Assistant to retrieve system data."
+      },
+      "reauth_confirm": {
+        "title": "Reauthentication Required",
+        "description": "Please reauthenticate to continue using the SunPower Maxeon integration."
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to the SunPower Maxeon API.",
+      "invalid_auth": "Invalid authentication credentials.",
+      "unknown": "An unknown error occurred."
+    },
+    "abort": {
+      "single_instance_allowed": "Only one SunPower Maxeon integration instance is allowed.",
+      "reauth_successful": "Reauthentication was successful."
+    }
+  },
   "options": {
     "step": {
+      "init": {
+        "title": "SunPower Maxeon Options"
+      },
       "menu": {
-        "title": "SunPower Maxeon Configuration",
-        "description": "Choose a section below to adjust settings for your system.",
-        "menu_options": {
-          "charging": "Charging Schedule",
-          "discharging": "Discharging Schedule",
-          "export": "Export Settings"
-        }
+        "title": "Configure",
+        "description": "Choose a category to configure.",
+        "charging": "⚡ Charging Schedule",
+        "discharging": "🔋 Discharging Schedule",
+        "export": "📤 Export Limit"
       },
       "charging": {
         "title": "Charging Schedule",
-        "description": "Adjust your battery's charging schedule, including time slots and maximum SoC."
-      },
-      "discharging": {
-        "title": "Discharging Schedule",
-        "description": "Configure how and when the battery should discharge."
-      },
-      "export": {
-        "title": "Energy Export Settings",
-        "description": "Configure energy export behavior to the grid or external systems."
+        "description": "Set up when the battery should charge and define a maximum state of charge."
+      }
+    },
+    "form": {
+      "charging": {
+        "enable": {
+          "name": "Enable Charging",
+          "description": "Toggle whether scheduled charging is active."
+        },
+        "start_time_1": {
+          "name": "Start Time (Slot 1)",
+          "description": "Time when the first charging slot begins."
+        },
+        "end_time_1": {
+          "name": "End Time (Slot 1)",
+          "description": "Time when the first charging slot ends."
+        },
+        "start_time_2": {
+          "name": "Start Time (Slot 2)",
+          "description": "Time when the second charging slot begins."
+        },
+        "end_time_2": {
+          "name": "End Time (Slot 2)",
+          "description": "Time when the second charging slot ends."
+        },
+        "max_soc": {
+          "name": "Maximum State of Charge (%)",
+          "description": "The maximum percentage to which the battery will be charged during the scheduled period."
+        }
       }
     }
-  },
-  "abort": {
-    "already_configured": "config.abort.already_configured",
-    "already_in_progress": "config.abort.already_in_progress",
-    "oauth_error": "config.abort.oauth_error",
-    "oauth_failed": "config.abort.oauth_failed",
-    "oauth_timeout": "config.abort.oauth_timeout",
-    "oauth_unauthorized": "config.abort.oauth_unauthorized",
-    "missing_configuration": "config.abort.missing_configuration",
-    "authorize_url_timeout": "config.abort.authorize_url_timeout",
-    "no_url_available": "config.abort.no_url_available",
-    "user_rejected_authorize": "config.abort.user_rejected_authorize"
-  },
-  "create_entry": {
-    "default": "config.create_entry.default"
   }
 }

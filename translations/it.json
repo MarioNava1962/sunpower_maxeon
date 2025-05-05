@@ -1,62 +1,69 @@
 {
+  "title": "SunPower Maxeon",
   "config": {
-    "abort": {
-      "already_configured": "L'account è già configurato",
-      "already_in_progress": "La configurazione è già in corso",
-      "authorize_url_timeout": "Timeout durante la generazione dell'URL di autorizzazione.",
-      "missing_configuration": "Il componente non è configurato. Si prega di seguire la documentazione.",
-      "no_url_available": "Nessun URL disponibile. Per informazioni su questo errore, [consulta la sezione di aiuto]({docs_url})",
-      "oauth_error": "Dati del token non validi ricevuti.",
-      "oauth_failed": "Errore durante l'ottenimento del token di accesso.",
-      "oauth_timeout": "Timeout durante la risoluzione del token OAuth.",
-      "oauth_unauthorized": "Errore di autorizzazione OAuth durante l'ottenimento del token di accesso.",
-      "user_rejected_authorize": "Collegamento dell'account rifiutato: {error}"
+    "step": {
+      "user": {
+        "title": "Autenticazione con SunPower Maxeon",
+        "description": "Collega il tuo account SunPower Maxeon a Home Assistant per recuperare i dati del sistema."
+      },
+      "reauth_confirm": {
+        "title": "Autenticazione necessaria",
+        "description": "Autenticati nuovamente per continuare a utilizzare l'integrazione SunPower Maxeon."
+      }
     },
-    "create_entry": {
-      "default": "Autenticazione avvenuta con successo"
+    "error": {
+      "cannot_connect": "Impossibile connettersi all'API di SunPower Maxeon.",
+      "invalid_auth": "Credenziali di autenticazione non valide.",
+      "unknown": "Si è verificato un errore sconosciuto."
+    },
+    "abort": {
+      "single_instance_allowed": "È consentita solo un'istanza dell'integrazione SunPower Maxeon.",
+      "reauth_successful": "Autenticazione riuscita con successo."
     }
   },
-
   "options": {
     "step": {
+      "init": {
+        "title": "Opzioni SunPower Maxeon"
+      },
       "menu": {
-        "title": "SunPower Maxeon Configuration",
-        "description": "Scegli la configurazione da modificare"
+        "title": "Configura",
+        "description": "Scegli una categoria da configurare.",
+        "charging": "⚡ Programma di Carica",
+        "discharging": "🔋 Programma di Scarica",
+        "export": "📤 Limite di Esportazione"
       },
       "charging": {
-        "title": "Configurazione programma di ricarica",
-        "description": "Configura il programma di ricarica, compreso l'orario e il limite massimo di carica."
-      },
-      "discharging": {
-        "title": "Configurazione programma di scarica",
-        "description": "Configura quando il sistema deve caricare la batteria e il limite massimo di carica.",
-        "data": {
-          "enable": "Abilita programma di ricarica",
-          "start_time_1": "Ora di inizio 1 (HH:MM)",
-          "end_time_1": "Ora di fine 1 (HH:MM)",
-          "start_time_2": "Ora di inizio 2 (HH:MM)",
-          "end_time_2": "Ora di fine 2 (HH:MM)",
-          "max_soc": "Stato di carica massimo (%)"
-        }
-      },
-      "export": {
-        "title": "Impostazioni di esportazione dell'energia",
-        "description": "Configura il comportamento dell'esportazione dell'energia verso la rete o sistemi esterni."
-      }
-    }
-  },
-  "entity": {
-    "switch": {
-      "battery_ups": {
-        "name": "UPS di backup",
-        "state_on": "Abilitato",
-        "state_off": "Disabilitato"
+        "title": "Programma di Carica",
+        "description": "Imposta quando la batteria deve caricarsi e definisci una carica massima."
       }
     },
-    "sensor": {
-      "battery_ups_status": {
-        "name": "Stato UPS di backup",
-        "unit_of_measurement": "Stato"
+    "form": {
+      "charging": {
+        "enable": {
+          "name": "Abilita Carica",
+          "description": "Attiva o disattiva il programma di carica programmata."
+        },
+        "start_time_1": {
+          "name": "Ora Inizio (Fascia 1)",
+          "description": "Ora in cui inizia la prima fascia di carica."
+        },
+        "end_time_1": {
+          "name": "Ora Fine (Fascia 1)",
+          "description": "Ora in cui termina la prima fascia di carica."
+        },
+        "start_time_2": {
+          "name": "Ora Inizio (Fascia 2)",
+          "description": "Ora in cui inizia la seconda fascia di carica."
+        },
+        "end_time_2": {
+          "name": "Ora Fine (Fascia 2)",
+          "description": "Ora in cui termina la seconda fascia di carica."
+        },
+        "max_soc": {
+          "name": "Stato di Carica Massimo (%)",
+          "description": "La batteria verrà caricata fino a questa percentuale massima durante il periodo programmato."
+        }
       }
     }
   }
