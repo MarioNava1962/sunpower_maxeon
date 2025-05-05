@@ -27,11 +27,13 @@
         "title": "Opzioni SunPower Maxeon"
       },
       "menu": {
-        "title": "Configurazione",
-        "description": "Scegli una categoria da configurare.",
-        "charging": "⚡ Programma di Carica",
-        "discharging": "🔋 Programma di Scarica",
-        "export": "📤 Limite di Esportazione"
+                "title": "Configurazioni",
+                "description": "Scegli una categoria da configurare.",
+                "menu_options": {
+                    "charging": "⚡ Programma di Carica",
+                    "discharging": "🔋 Programma di Scarica",
+                    "export": "📤 Limite di Esportazione"
+                }                
       },
       "charging": {
         "title": "Programma di Carica",

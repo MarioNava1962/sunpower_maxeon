@@ -27,15 +27,13 @@
         "title": "SunPower Maxeon Options"
       },
       "menu": {
-        "title": "Configure",
-        "description": "Choose a category to configure.",
-        "charging": "⚡ Charging Schedule",
-        "discharging": "🔋 Discharging Schedule",
-        "export": "📤 Export Limit"
-      },
-      "charging": {
-        "title": "Charging Schedule",
-        "description": "Set up when the battery should charge and define a maximum state of charge."
+                "title": "Configurations",
+                "description": "Choose a category to configure.",
+                "menu_options": {
+                    "charging": "⚡ Charging Schedule",
+                    "discharging": "🔋 Discharging Schedule",
+                    "export": "📤 Export Limit"
+                }                
       }
     },
     "charging_enable": "Enable Charging",
