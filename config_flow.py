@@ -7,10 +7,15 @@ from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import config_entry_oauth2_flow, selector
+from homeassistant.helpers import config_entry_oauth2_flow
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-from datetime import datetime
+from homeassistant.helpers.selector import (
+    BooleanSelector,
+    TimeSelector,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
+)
 
 from .const import DOMAIN
 from .api import AsyncConfigEntryAuth
@@ -72,7 +77,6 @@ class OAuth2FlowHandler(
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
 
-
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for SunPower Maxeon."""
 
@@ -82,10 +86,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Handle the initial step."""
-        hass = self.hass
-
         if user_input is not None:
-            # Create API client
+            hass = self.hass
+
             websession = async_get_clientsession(hass)
             oauth_session = config_entry_oauth2_flow.async_get_config_entry_oauth2_session(
                 hass, self.config_entry
@@ -102,7 +105,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 "max_soc": user_input["max_soc"]
             })
 
-            # Show persistent notification
             hass.async_create_task(
                 hass.services.async_call(
                     "persistent_notification",
@@ -124,12 +126,20 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema({
-                vol.Required("enable", default=True): bool,
-                vol.Required("start_time_1", default="14:00"): str,
-                vol.Required("end_time_1", default="16:00"): str,
-                vol.Required("start_time_2", default="14:00"): str,
-                vol.Required("end_time_2", default="16:00"): str,
-                vol.Required("max_soc", default=95): int,
-            }),
+            data_schema={
+                "enable": BooleanSelector(),
+                "start_time_1": TimeSelector(),
+                "end_time_1": TimeSelector(),
+                "start_time_2": TimeSelector(),
+                "end_time_2": TimeSelector(),
+                "max_soc": NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=100,
+                        step=1,
+                        mode=NumberSelectorMode.BOX,
+                        unit_of_measurement="%",
+                    )
+                ),
+            },
         )

@@ -18,6 +18,18 @@
     "step": {
       "pick_implementation": {
         "title": "Scegli il metodo di autenticazione"
+      },
+      "init": {
+        "title": "Programma di ricarica",
+        "description": "Configura quando il sistema deve caricare la batteria e il limite massimo di carica.",
+        "data": {
+          "enable": "Abilita programma di ricarica",
+          "start_time_1": "Ora di inizio 1 (HH:MM)",
+          "end_time_1": "Ora di fine 1 (HH:MM)",
+          "start_time_2": "Ora di inizio 2 (HH:MM)",
+          "end_time_2": "Ora di fine 2 (HH:MM)",
+          "max_soc": "Stato di carica massimo (%)"
+        }
       }
     }
   },

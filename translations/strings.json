@@ -3,6 +3,18 @@
     "step": {
       "pick_implementation": {
         "title": "config.step.pick_implementation.title"
+      },
+      "init": {
+        "title": "Battery Charging Schedule",
+        "description": "Set when your battery should charge and the maximum state of charge. All times are in 24-hour format.",
+        "data": {
+          "enable": "Enable Schedule",
+          "start_time_1": "Start Time 1",
+          "end_time_1": "End Time 1",
+          "start_time_2": "Start Time 2",
+          "end_time_2": "End Time 2",
+          "max_soc": "Max State of Charge (%)"
+        }
       }
     },
     "abort": {
