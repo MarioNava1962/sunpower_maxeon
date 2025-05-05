@@ -179,3 +179,20 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 ),
             }),
         )
+    async def async_step_export(self, user_input: dict[str, Any] | None = None):
+        """Configure export limit (placeholder)."""
+        # Replace this with actual form logic later
+        return self.async_show_form(
+            step_id="export",
+            data_schema=vol.Schema({}),
+            description_placeholders={"info": "Export configuration is not implemented yet."}
+        )
+
+    async def async_step_discharging(self, user_input: dict[str, Any] | None = None):
+        """Configure discharging schedule (placeholder)."""
+        # Replace this with actual form logic later
+        return self.async_show_form(
+            step_id="discharging",
+            data_schema=vol.Schema({}),
+            description_placeholders={"info": "Discharging configuration is not implemented yet."}
+        )
