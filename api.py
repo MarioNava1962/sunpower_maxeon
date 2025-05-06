@@ -91,21 +91,25 @@ class AsyncConfigEntryAuth:
         token = await self.async_get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
         url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/energy_meter"
-    
+
         try:
             async with self._websession.get(url, headers=headers) as resp:
-                resp.raise_for_status()
+                text = await resp.text()  # Read full response in case of error
+                if resp.status != 200:
+                    _LOGGER.error("Energy meter request failed: %s - %s", resp.status, text)
+                    resp.raise_for_status()
                 data = await resp.json()
                 _LOGGER.info("Received energy meter: %s", data)
                 return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Energy data for system {system_sn} not found, returning dummy data")
-                return ENERGY_METER  # This should be defined similarly to POWER_METER
+                return ENERGY_METER
             raise
         except Exception as err:
             _LOGGER.error("Failed to fetch system energy data: %s", err)
             return ENERGY_METER
+
 
     async def get_battery_ups_state(self, system_sn: str) -> dict:
         """Fetch the current UPS battery state (enabled/disabled)."""
