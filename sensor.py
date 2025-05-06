@@ -113,10 +113,11 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._attr_translation_key = key
         self._attr_unique_id = f"sunpower_{key}"
         self._attr_should_poll = False
         self._attr_native_unit_of_measurement = unit
+
+        self._attr_translation_key = key
 
         # Assign device class and state class if applicable
         if key in ["battery_capacity", "battery_usable_capacity"]:
