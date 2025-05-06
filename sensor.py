@@ -105,6 +105,8 @@ class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
 class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     """Entity to expose specific SunPower system detail fields."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         coordinator: SunPowerCoordinator,
@@ -113,11 +115,9 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._attr_unique_id = f"sunpower_maxeon_{key}"
-        self._attr_should_poll = False
+        self._attr_unique_id = f"sm_{key}"
+        self._attr_should_poll = True
         self._attr_native_unit_of_measurement = unit
-
-        self._attr_translation_key = key
 
         # Assign device class and state class if applicable
         if key in ["battery_capacity", "battery_usable_capacity"]:
@@ -133,7 +133,7 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             "production_kw", "consumption_kw", "feedin_kw", "self_consumption_kw",
             "p_pv", "p_consumption", "p_grid", "p_storage"
         ]:
-            self._attr_device_class = SensorDeviceClass.ENERGY
+            self._attr_device_class = SensorDeviceClass.POWER
             self._attr_state_class = SensorStateClass.MEASUREMENT
         elif key == "soc":
             self._attr_device_class = SensorDeviceClass.BATTERY
@@ -145,6 +145,11 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         ]:
             self._attr_device_class = SensorDeviceClass.ENERGY
             self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return self._key
 
     @property
     def native_value(self) -> Optional[float | int | str]:
@@ -174,40 +179,40 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             if self.native_value is None:
                 return "mdi:battery-unknown"
             soc = max(0, min(100, int(self.native_value)))
-            icon_level = (soc // 10) * 10  # Round down to nearest 10
+            icon_level = (soc // 10) * 10
             return f"mdi:battery-{icon_level}" if soc < 100 else "mdi:battery"
-    
         if "battery" in self._key:
             return "mdi:battery"
-        elif "pv_power" in self._key or "inverter" in self._key:
+        if "pv_power" in self._key or "inverter" in self._key:
             return "mdi:solar-power"
-        elif "threshold" in self._key:
+        if "threshold" in self._key:
             return "mdi:percent"
-        elif self._key in ("production_kw", "p_pv"):
+        if self._key in ("production_kw", "p_pv"):
             return "mdi:solar-panel"
-        elif self._key in ("consumption_kw", "p_consumption"):
+        if self._key in ("consumption_kw", "p_consumption"):
             return "mdi:transmission-tower"
-        elif self._key in ("feedin_kw", "p_grid"):
+        if self._key in ("feedin_kw", "p_grid"):
             return "mdi:transmission-tower-export"
-        elif self._key == "self_consumption_kw":
+        if self._key == "self_consumption_kw":
             return "mdi:home-lightning-bolt"
-        elif self._key == "p_storage":
+        if self._key == "p_storage":
             return "mdi:battery"
-        elif self._key == "e_grid_import":
+        if self._key == "e_grid_import":
             return "mdi:transmission-tower-import"
-        elif self._key == "e_grid_export":
+        if self._key == "e_grid_export":
             return "mdi:transmission-tower-export"
-        elif self._key == "e_consumption":
+        if self._key == "e_consumption":
             return "mdi:home-lightning-bolt"
-        elif self._key == "e_pv_generation":
+        if self._key == "e_pv_generation":
             return "mdi:solar-panel"
-        elif self._key == "e_storage_charge":
+        if self._key == "e_storage_charge":
             return "mdi:battery-arrow-up"
-        elif self._key == "e_storage_discharge":
+        if self._key == "e_storage_discharge":
             return "mdi:battery-arrow-down"
-        elif self._key.startswith("e_"):
+        if self._key.startswith("e_"):
             return "mdi:lightning-bolt-circle"
         return "mdi:gauge"
+
     
 class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the SunPower charging schedule."""
