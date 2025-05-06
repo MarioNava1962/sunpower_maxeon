@@ -54,6 +54,9 @@
       "p_storage": {
         "name": "Potenza Istantanea Batteria"
       },
+      "ups_enabled": {
+        "name": "Attivazione UPS"
+      },
       "feedin_threshold": {
         "name": "Limite Esportazione",
         "state": {

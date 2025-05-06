@@ -54,6 +54,9 @@
       "p_storage": {
         "name": "Storage Power(Real-Time)"
       },
+      "ups_enabled": {
+        "name": "Battery UPS Enabled"
+      },
       "feedin_threshold": {
         "name": "Export Threshold",
         "state": {

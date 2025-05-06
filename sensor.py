@@ -319,7 +319,7 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
 class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def __init__(self, coordinator):
         super().__init__(coordinator)
-        self._attr_name = "Battery UPS Enabled"
+        
         self._attr_unique_id = "sunpower_ups"
         self._attr_device_class = SensorDeviceClass.POWER
 
@@ -344,6 +344,11 @@ class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
             "model": data.get("inverter_model", "Unknown"),
             "sw_version": data.get("inv_version"),
         }
+    
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return "ups_enabled"
 
 class ExportLimitSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the export limit setting."""
