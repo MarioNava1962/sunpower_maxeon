@@ -113,7 +113,7 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._attr_unique_id = f"sunpower_{key}"
+        self._attr_unique_id = f"sunpower_maxeon_{key}"
         self._attr_should_poll = False
         self._attr_native_unit_of_measurement = unit
 
@@ -133,7 +133,7 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             "production_kw", "consumption_kw", "feedin_kw", "self_consumption_kw",
             "p_pv", "p_consumption", "p_grid", "p_storage"
         ]:
-            self._attr_device_class = SensorDeviceClass.POWER
+            self._attr_device_class = SensorDeviceClass.ENERGY
             self._attr_state_class = SensorStateClass.MEASUREMENT
         elif key == "soc":
             self._attr_device_class = SensorDeviceClass.BATTERY

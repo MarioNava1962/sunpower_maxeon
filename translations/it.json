@@ -4,15 +4,6 @@
       "battery_capacity": {
         "name": "Capacità della Batteria"
       },
-      "sunpower_maxeon_system": {
-        "name": "Sistema SunPower Maxeon",
-        "state": {
-          "normal": "Attivo",
-          "disabled": "Disabilitato",
-          "dummy_data": "API non funzionante",
-          "unknown": "Sconosciuto"
-        }
-      },
       "battery_usable_capacity": {
         "name": "Capacità Usabile della Batteria"
       },

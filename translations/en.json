@@ -3,16 +3,7 @@
     "sensor": {
       "battery_capacity": {
         "name": "Battery Capacity"
-      },
-        "sunpower_maxeon_system": {
-          "name": "Sunpower Maxeon System",
-          "state": {
-              "normal": "Active",
-              "disabled": "Disabled",
-              "dummy_data": "API not working",
-              "unknown": "Unknown"
-          }
-        },
+      },        
       "battery_usable_capacity": {
         "name": "Usable Battery Capacity"
       },
