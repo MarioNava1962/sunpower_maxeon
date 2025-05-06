@@ -89,6 +89,6 @@ DISCHARGING_SCHEDULE = {
 }
 
 EXPORT_LIMIT = {
-  "system_sn": "default",
+  
   "export_rate": 80
 }
