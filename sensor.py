@@ -218,7 +218,7 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the SunPower charging schedule."""
 
     _attr_has_entity_name = True
-    _attr_name = "Charging Schedule"
+    
     _attr_unique_id = "sunpower_charging_schedule"
     _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
 
@@ -258,11 +258,16 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     def schedule(self) -> dict:
         return self.coordinator.data.get("charging_schedule", {})
     
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return self._key
+    
 class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the SunPower discharging schedule."""
 
     _attr_has_entity_name = True
-    _attr_name = "Discharging Schedule"
+    
     _attr_unique_id = "sunpower_discharging_schedule"
     _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
 
@@ -301,6 +306,11 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     @property
     def schedule(self) -> dict:
         return self.coordinator.data.get("discharging_schedule", {})
+    
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return "discharging_schedule"
 
 class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def __init__(self, coordinator):

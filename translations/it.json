@@ -8,7 +8,7 @@
         "name": "Capacità Usabile della Batteria"
       },
       "installed_pv_power": {
-        "name": "Potenza Installata del PV"
+        "name": "Potenza Installata dei Pannelli"
       },
       "inverter_rated_power": {
         "name": "Potenza Nominale dell'Inverter"
@@ -23,7 +23,7 @@
         "name": "Energia Importata dalla Rete"
       },
       "e_pv_generation": {
-        "name": "Generazione del PV"
+        "name": "Generazione dei Pannelli"
       },
       "e_storage_charge": {
         "name": "Carica della Batteria"
@@ -35,23 +35,44 @@
         "name": "Consumo Totale"
       },
       "p_pv": {
-        "name": "Potenza del Pannello"
+        "name": "Potenza Istantanea Pannello"
       },
       "p_consumption": {
         "name": "Consumo Istantaneo"
       },
       "p_grid": {
-        "name": "Potenza dalla Rete"
+        "name": "Potenza Istantanea Rete"
       },
       "p_storage": {
-        "name": "Potenza della Batteria"
+        "name": "Potenza Istantanea Batteria"
       },
       "feedin_threshold": {
-        "name": "Soglia di Alimentazione"
+        "name": "Limite Esportazione"
       },
-      "self_consumption_kw": {
-        "name": "Potenza di Auto-consumo"
-      }
+      "discharging_schedule": {
+          "name": "Programma Scarica Batteria",
+          "state_attributes": {
+            "start_time_1": {
+              "name": "Ora Inizio 1"
+            },
+            "end_time_1": {
+              "name": "Ora Fine 1"
+            },
+            "start_time_2": {
+              "name": "Ora Inizio 2"
+            },
+            "end_time_2": {
+              "name": "Ora Fine 2"
+            },
+            "min_soc": {
+              "name": "Carica Minima Residua"
+            }
+          },
+          "state": {
+            "enabled": "Attivo",
+            "disabled": "Disattivo"
+          }
+        }
     }
   },
   "title": "SunPower Maxeon",

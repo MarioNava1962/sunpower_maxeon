@@ -8,7 +8,7 @@
         "name": "Usable Battery Capacity"
       },
       "installed_pv_power": {
-        "name": "Installed PV Power"
+        "name": "Installed Panel Power"
       },
       "inverter_rated_power": {
         "name": "Inverter Rated Power"
@@ -23,7 +23,7 @@
         "name": "Grid Import Energy"
       },
       "e_pv_generation": {
-        "name": "PV Generation"
+        "name": "Panels Generation"
       },
       "e_storage_charge": {
         "name": "Storage Charge"
@@ -35,23 +35,44 @@
         "name": "Total Consumption"
       },
       "p_pv": {
-        "name": "Panel Power"
+        "name": "Panel Power(Real-Time)"
       },
       "p_consumption": {
-        "name": "Consumption Power"
+        "name": "Consumption Power(Real-Time)"
       },
       "p_grid": {
-        "name": "Grid Power"
+        "name": "Grid Power(Real-Time)"
       },
       "p_storage": {
-        "name": "Storage Power"
+        "name": "Storage Power(Real-Time)"
       },
       "feedin_threshold": {
-        "name": "Feed-in Threshold"
+        "name": "Export Threshold"
       },
-      "self_consumption_kw": {
-        "name": "Self-Consumption Power"
-      }
+      "discharging_schedule": {
+          "name": "Discharging Schedule",
+          "state_attributes": {
+            "start_time_1": {
+              "name": "Start Time 1"
+            },
+            "end_time_1": {
+              "name": "End Time 1"
+            },
+            "start_time_2": {
+              "name": "Start Time 2"
+            },
+            "end_time_2": {
+              "name": "End Time 2"
+            },
+            "min_soc": {
+              "name": "Minimum SoC"
+            }
+          },
+          "state": {
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+          }
+        }
     }
   },
   "title": "SunPower Maxeon",
