@@ -8,17 +8,17 @@
       },
       "reauth_confirm": {
         "title": "Autenticazione richiesta",
-        "description": "Effettua nuovamente l'autenticazione per continuare a utilizzare l'integrazione SunPower Maxeon."
+        "description": "Per favore, riautenticati per continuare a utilizzare l'integrazione SunPower Maxeon."
       }
     },
     "error": {
-      "cannot_connect": "Impossibile connettersi all'API SunPower Maxeon.",
+      "cannot_connect": "Impossibile connettersi all'API di SunPower Maxeon.",
       "invalid_auth": "Credenziali di autenticazione non valide.",
       "unknown": "Si è verificato un errore sconosciuto."
     },
     "abort": {
-      "single_instance_allowed": "È consentita una sola istanza dell'integrazione SunPower Maxeon.",
-      "reauth_successful": "Autenticazione avvenuta con successo."
+      "single_instance_allowed": "È consentita solo un'istanza dell'integrazione SunPower Maxeon.",
+      "reauth_successful": "Autenticazione riuscita."
     }
   },
   "options": {
@@ -30,47 +30,48 @@
         "title": "Configurazioni",
         "description": "Scegli una categoria da configurare.",
         "menu_options": {
-          "charging": "⚡ Programma di carica",
-          "discharging": "🔋 Programma di scarica",
-          "export": "📤 Limite di esportazione"
+          "charging": "⚡ Programma di Carica",
+          "discharging": "🔋 Programma di Scarica",
+          "export": "📤 Limite di Esportazione",
+          "ups": "🔌 Modalità UPS"
         }
       },
       "charging": {
-        "title": "Programma di carica",
+        "title": "Programma di Carica",
         "description": "Configura quando la batteria deve essere caricata e imposta un limite massimo di carica.",
         "data": {
-          "enable": "Abilita la carica",
-          "start_time_1": "Orario di inizio (Fascia 1)",
-          "end_time_1": "Orario di fine (Fascia 1)",
-          "start_time_2": "Orario di inizio (Fascia 2)",
-          "end_time_2": "Orario di fine (Fascia 2)",
-          "max_soc": "Stato di carica massimo (%)"
+          "enable": "Abilita Carica",
+          "start_time_1": "Ora di Inizio (Slot 1)",
+          "end_time_1": "Ora di Fine (Slot 1)",
+          "start_time_2": "Ora di Inizio (Slot 2)",
+          "end_time_2": "Ora di Fine (Slot 2)",
+          "max_soc": "Stato di Carica Massimo (%)"
         }
       },
       "discharging": {
-        "title": "Programma di scarica",
-        "description": "Configura quando la batteria deve essere scaricata e imposta un limite minimo di carica residua.",
+        "title": "Programma di Scarica",
+        "description": "Configura quando la batteria deve essere scaricata e imposta un limite minimo residuo.",
         "data": {
-          "enable": "Abilita la scarica",
-          "start_time_1": "Orario di inizio (Fascia 1)",
-          "end_time_1": "Orario di fine (Fascia 1)",
-          "start_time_2": "Orario di inizio (Fascia 2)",
-          "end_time_2": "Orario di fine (Fascia 2)",
-          "min_soc": "Stato di carica minimo (%)"
+          "enable": "Abilita Scarica",
+          "start_time_1": "Ora di Inizio (Slot 1)",
+          "end_time_1": "Ora di Fine (Slot 1)",
+          "start_time_2": "Ora di Inizio (Slot 2)",
+          "end_time_2": "Ora di Fine (Slot 2)",
+          "min_soc": "Stato di Carica Minimo (%)"
         }
       },
       "export": {
-        "title": "Limite di esportazione",
-        "description": "Configura la quantità massima di energia che il sistema può esportare verso la rete.",
+        "title": "Limite di Esportazione",
+        "description": "Configura la quantità massima di energia che il tuo sistema può esportare in rete.",
         "data": {
-          "export_rate": "Tasso massimo di esportazione (%)"
+          "export_rate": "Tasso Massimo di Esportazione (%)"
         }
       },
       "ups": {
-        "title": "Configura UPS",
-        "description": "Attiva/Disattiva UPS backup.",
+        "title": "Modalità UPS",
+        "description": "Abilita o disabilita la modalità UPS, che mantiene la batteria pronta per l'uso di backup.",
         "data": {
-          "enable": "Attiva UPS"
+          "enable": "Abilita Modalità UPS"
         }
       }
     }

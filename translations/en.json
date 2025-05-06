@@ -32,7 +32,8 @@
         "menu_options": {
           "charging": "⚡ Charging Schedule",
           "discharging": "🔋 Discharging Schedule",
-          "export": "📤 Export Limit"
+          "export": "📤 Export Limit",
+          "ups": "🔌 UPS Mode"
         }
       },
       "charging": {
@@ -67,12 +68,14 @@
         }
       },
       "ups": {
-        "title": "UPS State",
-        "description": "Enable/Disable the UPS Battery.",
+        "title": "UPS Mode",
+        "description": "Enable or disable UPS mode, which keeps the battery ready for backup use.",
         "data": {
-          "enable": "Enable UPS"
+          "enable": "Enable UPS Mode"
         }
       }
     }
   }
 }
+
+   

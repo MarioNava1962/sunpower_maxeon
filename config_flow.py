@@ -84,31 +84,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         super().__init__()
         self._entry = config_entry
 
-    async def async_step_init(self, user_input=None):
-        """Show the menu with configuration sections."""
-        return await self.async_step_menu()
-
-    async def async_step_menu(self, user_input=None):
-        """Menu step to choose what to configure."""
-        return self.async_show_menu(
-            step_id="menu",
-            menu_options={
-                "charging",
-                "discharging",
-                "export",
-                "ups",
-            },
-        )
-
-    async def async_step_charging(self, user_input: dict[str, Any] | None = None):
-        """Configure charging schedule."""
+    async def _get_api(self) -> AsyncConfigEntryAuth:
         websession = async_get_clientsession(self.hass)
         implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
             self.hass, self._entry
         )
-        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
-        api = AsyncConfigEntryAuth(websession, oauth_session)
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(
+            self.hass, self._entry, implementation
+        )
+        return AsyncConfigEntryAuth(websession, oauth_session)
 
+    async def _get_system_sn(self, api: AsyncConfigEntryAuth) -> str:
         systems = await api.async_get_systems()
         if not systems.get("systems"):
             raise ValueError("No systems returned from API")
@@ -117,6 +103,23 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if not system_sn:
             raise ValueError("System SN missing in API response")
 
+        return system_sn
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        """Show the menu with configuration sections."""
+        return await self.async_step_menu()
+
+    async def async_step_menu(self, user_input: dict[str, Any] | None = None):
+        """Menu step to choose what to configure."""
+        return self.async_show_menu(
+            step_id="menu",
+            menu_options={"charging", "discharging", "export", "ups"},
+        )
+
+    async def async_step_charging(self, user_input: dict[str, Any] | None = None):
+        """Configure charging schedule."""
+        api = await self._get_api()
+        system_sn = await self._get_system_sn(api)
         charging = await api.async_get_charging_schedule(system_sn)
 
         if user_input is not None:
@@ -133,109 +136,21 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="charging",
             data_schema=vol.Schema({
-                vol.Required(
-                    "enable",
-                    default=charging.get("enable", True)
-                    
-                ): BooleanSelector(),
-
-                vol.Required(
-                    "start_time_1",
-                    default=charging.get("start_time_1", "14:00")
-                    
-                ): TimeSelector(),
-
-                vol.Required(
-                    "end_time_1",
-                    default=charging.get("end_time_1", "16:00")
-                ): TimeSelector(),
-
-                vol.Required(
-                    "start_time_2",
-                    default=charging.get("start_time_2", "20:00")
-                ): TimeSelector(),
-
-                vol.Required(
-                    "end_time_2",
-                    default=charging.get("end_time_2", "22:00")
-                ): TimeSelector(),
-
-                vol.Required(
-                    "max_soc",
-                    default=charging.get("max_soc", 95)
-                ): NumberSelector(
-                    NumberSelectorConfig(
-                        min=0,
-                        max=100,
-                        step=1,
-                        mode="box",
-                        unit_of_measurement="%",
-                    )
+                vol.Required("enable", default=charging.get("enable", True)): BooleanSelector(),
+                vol.Required("start_time_1", default=charging.get("start_time_1", "14:00")): TimeSelector(),
+                vol.Required("end_time_1", default=charging.get("end_time_1", "16:00")): TimeSelector(),
+                vol.Required("start_time_2", default=charging.get("start_time_2", "20:00")): TimeSelector(),
+                vol.Required("end_time_2", default=charging.get("end_time_2", "22:00")): TimeSelector(),
+                vol.Required("max_soc", default=charging.get("max_soc", 95)): NumberSelector(
+                    NumberSelectorConfig(min=0, max=100, step=1, mode="box", unit_of_measurement="%")
                 ),
             }),
         )
-    
-    async def async_step_export(self, user_input: dict[str, Any] | None = None):
-        """Configure export limit."""
-        websession = async_get_clientsession(self.hass)
-        implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-            self.hass, self._entry
-        )
-        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
-        api = AsyncConfigEntryAuth(websession, oauth_session)
-
-        systems = await api.async_get_systems()
-        if not systems.get("systems"):
-            raise ValueError("No systems returned from API")
-
-        system_sn = systems["systems"][0].get("system_sn")
-        if not system_sn:
-            raise ValueError("System SN missing in API response")
-
-        export = await api.async_get_export_limit(system_sn)
-
-        if user_input is not None:
-            await api.async_set_export_limit(system_sn, {
-                "export_rate": user_input["export_rate"]
-            })
-            return self.async_create_entry(title="Export Limit", data={})
-
-        return self.async_show_form(
-            step_id="export",
-            data_schema=vol.Schema({
-                vol.Required(
-                    "export_rate",
-                    default=export.get("export_rate", 80)
-                ): NumberSelector(
-                    NumberSelectorConfig(
-                        min=0,
-                        max=100,
-                        step=1,
-                        mode="box",
-                        unit_of_measurement="%",
-                    )
-                ),
-            }),
-        )
-
 
     async def async_step_discharging(self, user_input: dict[str, Any] | None = None):
         """Configure discharging schedule."""
-        websession = async_get_clientsession(self.hass)
-        implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-            self.hass, self._entry
-        )
-        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
-        api = AsyncConfigEntryAuth(websession, oauth_session)
-
-        systems = await api.async_get_systems()
-        if not systems.get("systems"):
-            raise ValueError("No systems returned from API")
-
-        system_sn = systems["systems"][0].get("system_sn")
-        if not system_sn:
-            raise ValueError("System SN missing in API response")
-
+        api = await self._get_api()
+        system_sn = await self._get_system_sn(api)
         discharging = await api.async_get_discharging_schedule(system_sn)
 
         if user_input is not None:
@@ -252,65 +167,42 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="discharging",
             data_schema=vol.Schema({
-                vol.Required(
-                    "enable",
-                    default=discharging.get("enable", True)
-                    
-                ): BooleanSelector(),
-
-                vol.Required(
-                    "start_time_1",
-                    default=discharging.get("start_time_1", "14:00")
-                    
-                ): TimeSelector(),
-
-                vol.Required(
-                    "end_time_1",
-                    default=discharging.get("end_time_1", "16:00")
-                ): TimeSelector(),
-
-                vol.Required(
-                    "start_time_2",
-                    default=discharging.get("start_time_2", "20:00")
-                ): TimeSelector(),
-
-                vol.Required(
-                    "end_time_2",
-                    default=discharging.get("end_time_2", "22:00")
-                ): TimeSelector(),
-
-                vol.Required(
-                    "min_soc",
-                    default=discharging.get("max_soc", 95)
-                ): NumberSelector(
-                    NumberSelectorConfig(
-                        min=0,
-                        max=100,
-                        step=1,
-                        mode="box",
-                        unit_of_measurement="%",
-                    )
+                vol.Required("enable", default=discharging.get("enable", True)): BooleanSelector(),
+                vol.Required("start_time_1", default=discharging.get("start_time_1", "14:00")): TimeSelector(),
+                vol.Required("end_time_1", default=discharging.get("end_time_1", "16:00")): TimeSelector(),
+                vol.Required("start_time_2", default=discharging.get("start_time_2", "20:00")): TimeSelector(),
+                vol.Required("end_time_2", default=discharging.get("end_time_2", "22:00")): TimeSelector(),
+                vol.Required("min_soc", default=discharging.get("min_soc", 20)): NumberSelector(
+                    NumberSelectorConfig(min=0, max=100, step=1, mode="box", unit_of_measurement="%")
                 ),
             }),
         )
-    
-    async def async_step_ups(self, user_input: dict[str, Any] | None = None):
-        """Configure UPS."""
-        websession = async_get_clientsession(self.hass)
-        implementation = await config_entries.config_entry_oauth2_flow.async_get_config_entry_implementation(
-            self.hass, self._entry
+
+    async def async_step_export(self, user_input: dict[str, Any] | None = None):
+        """Configure export limit."""
+        api = await self._get_api()
+        system_sn = await self._get_system_sn(api)
+        export = await api.async_get_export_limit(system_sn)
+
+        if user_input is not None:
+            await api.async_set_export_limit(system_sn, {
+                "export_rate": user_input["export_rate"]
+            })
+            return self.async_create_entry(title="Export Limit", data={})
+
+        return self.async_show_form(
+            step_id="export",
+            data_schema=vol.Schema({
+                vol.Required("export_rate", default=export.get("export_rate", 80)): NumberSelector(
+                    NumberSelectorConfig(min=0, max=100, step=1, mode="box", unit_of_measurement="%")
+                ),
+            }),
         )
-        oauth_session = config_entries.config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
-        api = AsyncConfigEntryAuth(websession, oauth_session)
 
-        systems = await api.async_get_systems()
-        if not systems.get("systems"):
-            raise ValueError("No systems returned from API")
-
-        system_sn = systems["systems"][0].get("system_sn")
-        if not system_sn:
-            raise ValueError("System SN missing in API response")
-
+    async def async_step_ups(self, user_input: dict[str, Any] | None = None):
+        """Configure UPS state."""
+        api = await self._get_api()
+        system_sn = await self._get_system_sn(api)
         ups = await api.get_battery_ups_state(system_sn)
 
         if user_input is not None:
@@ -318,11 +210,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 "enable": user_input["enable"]
             })
             return self.async_create_entry(title="UPS State", data={})
-        
+
         return self.async_show_form(
             step_id="ups",
             data_schema=vol.Schema({
                 vol.Required("enable", default=ups.get("enable", True)): BooleanSelector()
             }),
         )
-
