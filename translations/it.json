@@ -47,6 +47,19 @@
                   "max_soc": "Stato di Carica Massimo (%)"
                   }
                 
+              },
+        "discharging": {
+        "title": "Programma di Scarica",
+        "description": "Configura quando la batteria deve scaricarsi e imposta un limite minimo di carica residua.",
+        "data": {
+                  "enable": "Abilita Scarica",
+                  "start_time_1": "Ora Inizio (Slot 1)",
+                  "end_time_1": "Ora Fine (Slot 1)",
+                  "start_time_2": "Ora Inizio (Slot 2)",
+                  "end_time_2": "Ora Fine (Slot 2)",
+                  "min_soc": "Stato di Carica Minimo (%)"
+                  }
+                
               }
         }
     }

@@ -78,3 +78,12 @@ CHARGING_SCHEDULE = {
     "end_time_2": "16:00",
     "max_soc": 95
 }
+
+DISCHARGING_SCHEDULE = {
+    "enable": True,
+    "start_time_1": "14:00",
+    "end_time_1": "16:00",
+    "start_time_2": "14:00",
+    "end_time_2": "16:00",
+    "min_soc": 20
+}

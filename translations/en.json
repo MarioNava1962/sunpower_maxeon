@@ -46,6 +46,18 @@
           "end_time_2": "End Time (Slot 2)",
           "max_soc": "Maximum State of Charge (%)"
         }
+      },
+      "discharging": {
+        "title": "Discharging Schedule",
+        "description": "Configure when the battery should discharge and set a min residual charge limit.",
+        "data": {
+          "enable": "Enable Discharging",
+          "start_time_1": "Start Time (Slot 1)",
+          "end_time_1": "End Time (Slot 1)",
+          "start_time_2": "Start Time (Slot 2)",
+          "end_time_2": "End Time (Slot 2)",
+          "min_soc": "Min State of Charge (%)"
+        }
       }
     }
   }

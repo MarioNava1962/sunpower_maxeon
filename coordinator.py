@@ -45,6 +45,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
             energy_data = await self.api.async_get_system_energy(system_sn)
             battery_ups_data = await self.api.get_battery_ups_state(system_sn)
             charging_schedule = await self.api.async_get_charging_schedule(system_sn)
+            discharging_schedule = await self.api.async_get_discharging_schedule(system_sn)
 
             merged = {
                 **system,
@@ -53,6 +54,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
                 **energy_data,
                 "battery_ups": battery_ups_data,
                 "charging_schedule": charging_schedule,
+                "discharging_schedule": discharging_schedule,
                 "system_sn": system_sn,
             }
 

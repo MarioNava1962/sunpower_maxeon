@@ -172,6 +172,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 ),
             }),
         )
+    
     async def async_step_export(self, user_input: dict[str, Any] | None = None):
         """Configure export limit (placeholder)."""
         # Replace this with actual form logic later
@@ -182,10 +183,76 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         )
 
     async def async_step_discharging(self, user_input: dict[str, Any] | None = None):
-        """Configure discharging schedule (placeholder)."""
-        # Replace this with actual form logic later
+        """Configure discharging schedule."""
+        websession = async_get_clientsession(self.hass)
+        implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
+            self.hass, self.config_entry
+        )
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
+        api = AsyncConfigEntryAuth(websession, oauth_session)
+
+        systems = await api.async_get_systems()
+        if not systems.get("systems"):
+            raise ValueError("No systems returned from API")
+
+        system_sn = systems["systems"][0].get("system_sn")
+        if not system_sn:
+            raise ValueError("System SN missing in API response")
+
+        discharging = await api.async_get_discharging_schedule(system_sn)
+
+        if user_input is not None:
+            await api.async_set_discharging_schedule(system_sn, {
+                "enable": user_input["enable"],
+                "start_time_1": user_input["start_time_1"],
+                "end_time_1": user_input["end_time_1"],
+                "start_time_2": user_input["start_time_2"],
+                "end_time_2": user_input["end_time_2"],
+                "min_soc": user_input["min_soc"],
+            })
+            return self.async_create_entry(title="Discharging Schedule", data={})
+
         return self.async_show_form(
             step_id="discharging",
-            data_schema=vol.Schema({}),
-            description_placeholders={"info": "Discharging configuration is not implemented yet."}
+            data_schema=vol.Schema({
+                vol.Required(
+                    "enable",
+                    default=discharging.get("enable", True)
+                    
+                ): BooleanSelector(),
+
+                vol.Required(
+                    "start_time_1",
+                    default=discharging.get("start_time_1", "14:00")
+                    
+                ): TimeSelector(),
+
+                vol.Required(
+                    "end_time_1",
+                    default=discharging.get("end_time_1", "16:00")
+                ): TimeSelector(),
+
+                vol.Required(
+                    "start_time_2",
+                    default=discharging.get("start_time_2", "20:00")
+                ): TimeSelector(),
+
+                vol.Required(
+                    "end_time_2",
+                    default=discharging.get("end_time_2", "22:00")
+                ): TimeSelector(),
+
+                vol.Required(
+                    "min_soc",
+                    default=discharging.get("max_soc", 95)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=100,
+                        step=1,
+                        mode="box",
+                        unit_of_measurement="%",
+                    )
+                ),
+            }),
         )
