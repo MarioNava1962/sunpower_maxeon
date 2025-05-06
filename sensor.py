@@ -317,6 +317,8 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
         return "discharging_schedule"
 
 class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
+    _attr_has_entity_name = True
+    
     def __init__(self, coordinator):
         super().__init__(coordinator)
         
