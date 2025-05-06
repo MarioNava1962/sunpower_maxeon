@@ -29,26 +29,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SunPowerSystemInfo(coordinator),
 
         # Static system detail sensors
-        SunPowerDetailSensor(coordinator, "battery_capacity", "Battery Capacity", "kWh"),
-        SunPowerDetailSensor(coordinator, "installed_pv_power", "Installed PV Power", "kW"),
-        SunPowerDetailSensor(coordinator, "inverter_rated_power", "Inverter Rated Power", "kW"),
-        SunPowerDetailSensor(coordinator, "battery_usable_capacity", "Battery Usable Capacity", "kWh"),
-        SunPowerDetailSensor(coordinator, "feedin_threshold", "Feed-In Threshold", "%"),
+        SunPowerDetailSensor(coordinator, "battery_capacity",  "kWh"),
+        SunPowerDetailSensor(coordinator, "installed_pv_power",  "kW"),
+        SunPowerDetailSensor(coordinator, "inverter_rated_power",  "kW"),
+        SunPowerDetailSensor(coordinator, "battery_usable_capacity",  "kWh"),
+        SunPowerDetailSensor(coordinator, "feedin_threshold",  "%"),
 
         #Power Meter Sensors
-        SunPowerDetailSensor(coordinator, "p_pv", "PV Production (Real-Time)", "W"),
-        SunPowerDetailSensor(coordinator, "p_grid", "Grid Power Flow", "W"),
-        SunPowerDetailSensor(coordinator, "p_storage", "Battery Power Flow", "W"),
-        SunPowerDetailSensor(coordinator, "p_consumption", "Home Consumption (Real-Time)", "W"),
-        SunPowerDetailSensor(coordinator, "soc", "Battery State of Charge", "%"),
+        SunPowerDetailSensor(coordinator, "p_pv",  "W"),
+        SunPowerDetailSensor(coordinator, "p_grid",  "W"),
+        SunPowerDetailSensor(coordinator, "p_storage",  "W"),
+        SunPowerDetailSensor(coordinator, "p_consumption",  "W"),
+        SunPowerDetailSensor(coordinator, "soc",  "%"),
 
         #Energy Meter Sensors
-        SunPowerDetailSensor(coordinator, "e_pv_generation", "Total PV Generation", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_storage_charge", "Total Battery Charge", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_storage_discharge", "Total Battery Discharge", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_grid_import", "Total Grid Import", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_grid_export", "Total Grid Export", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_consumption", "Total Home Consumption", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_pv_generation",  "Wh"),
+        SunPowerDetailSensor(coordinator, "e_storage_charge",  "Wh"),
+        SunPowerDetailSensor(coordinator, "e_storage_discharge", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_grid_import", "Wh"),
+        SunPowerDetailSensor(coordinator, "e_grid_export",  "Wh"),
+        SunPowerDetailSensor(coordinator, "e_consumption",  "Wh"),
 
         #Schedule Coordinator
         ChargingScheduleSensor(coordinator),
