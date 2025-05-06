@@ -1,4 +1,17 @@
 {
+  "entity": {
+    "sensor": {
+      "sunpower_maxeon_system": {
+        "name": "SunPower Maxeon System",
+        "state": {
+          "normal": "Attivo",
+          "disabled": "Inattivo",
+          "dummy_data": "API non funzionanti",
+          "unknown": "Unknown"
+        }
+      }
+    }
+  },
   "title": "SunPower Maxeon",
   "config": {
     "step": {
