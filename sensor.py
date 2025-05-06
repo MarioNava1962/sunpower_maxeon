@@ -7,7 +7,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.const import DEVICE_CLASS_POWER
+
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorDeviceClass,
@@ -303,7 +303,7 @@ class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
         super().__init__(coordinator)
         self._attr_name = "Battery UPS Enabled"
         self._attr_unique_id = "sunpower_ups"
-        self._attr_device_class = DEVICE_CLASS_POWER
+        self._attr_device_class = SensorDeviceClass.POWER
 
     @property
     def is_on(self) -> bool:

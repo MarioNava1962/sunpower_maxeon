@@ -14,7 +14,7 @@ from .config_flow import OptionsFlowHandler  # 👈 Add this
 
 _LOGGER = logging.getLogger(__name__)
 
-_PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH]
+_PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 type SunPowerConfigEntry = ConfigEntry[SunPowerCoordinator]
 
