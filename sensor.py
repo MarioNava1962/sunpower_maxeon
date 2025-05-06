@@ -62,8 +62,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
     async_add_entities(entities, True)
 
-
-
 class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
     """Entity to expose SunPower system status and metadata."""
 
@@ -105,7 +103,6 @@ class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
     def translation_key(self) -> str:
         """Return the translation key to localize the entity name."""
         return "sunpower_maxeon_system"
-
 
 class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     """Entity to expose specific SunPower system detail fields."""
