@@ -96,7 +96,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 "charging",
                 "discharging",
                 "export",
-                "ups"
+                "ups",
             },
         )
 
