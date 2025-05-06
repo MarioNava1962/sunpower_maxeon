@@ -35,10 +35,10 @@
         "name": "Consumo Totale"
       },
       "p_pv": {
-        "name": "Potenza del PV"
+        "name": "Potenza del Pannello"
       },
       "p_consumption": {
-        "name": "Potenza di Consumo"
+        "name": "Consumo Istantaneo"
       },
       "p_grid": {
         "name": "Potenza dalla Rete"

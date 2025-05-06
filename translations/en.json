@@ -35,7 +35,7 @@
         "name": "Total Consumption"
       },
       "p_pv": {
-        "name": "PV Power"
+        "name": "Panel Power"
       },
       "p_consumption": {
         "name": "Consumption Power"

@@ -20,7 +20,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name="SunPower Maxeon",
-            update_interval=timedelta(minutes=1),
+            update_interval=timedelta(seconds=10),
         )
 
     async def _async_update_data(self):
