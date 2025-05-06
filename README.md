@@ -39,9 +39,9 @@ This is a custom integration for Home Assistant that allows you to monitor your 
 
 ### Features
 
-- OAuth2 authentication with automatic token refresh  
-- Sensor platform for system status and metadata  
-- Reauthentication support if credentials expire  
+- OAuth2 authentication with automatic token refresh and reAuth 
+- Sensor platform for system status, metadata and monitoring  
+- Configurations for controls systems  
 
 ---
 
