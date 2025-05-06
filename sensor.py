@@ -261,7 +261,7 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     @property
     def translation_key(self) -> str:
         """Return the translation key to localize the entity name."""
-        return self._key
+        return "charging_schedule"
     
 class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the SunPower discharging schedule."""

@@ -72,6 +72,30 @@
             "enabled": "Enabled",
             "disabled": "Disabled"
           }
+        },
+        "charging_schedule": {
+          "name": "Charging Schedule",
+          "state_attributes": {
+            "start_time_1": {
+              "name": "Start Time 1"
+            },
+            "end_time_1": {
+              "name": "End Time 1"
+            },
+            "start_time_2": {
+              "name": "Start Time 2"
+            },
+            "end_time_2": {
+              "name": "End Time 2"
+            },
+            "min_soc": {
+              "name": "Maximum SoC"
+            }
+          },
+          "state": {
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+          }
         }
     }
   },

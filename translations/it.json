@@ -72,6 +72,30 @@
             "enabled": "Attivo",
             "disabled": "Disattivo"
           }
+        },
+      "charging_schedule": {
+          "name": "Programma Carica Batteria",
+          "state_attributes": {
+            "start_time_1": {
+              "name": "Ora Inizio 1"
+            },
+            "end_time_1": {
+              "name": "Ora Fine 1"
+            },
+            "start_time_2": {
+              "name": "Ora Inizio 2"
+            },
+            "end_time_2": {
+              "name": "Ora Fine 2"
+            },
+            "min_soc": {
+              "name": "Carica Massima"
+            }
+          },
+          "state": {
+            "enabled": "Attivo",
+            "disabled": "Disattivo"
+          }
         }
     }
   },
