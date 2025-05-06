@@ -36,7 +36,7 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received systems: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
+            if err.status in (404, 400):
                 _LOGGER.warning("Received 404, returning dummy systems data")
                 return {"systems": SYSTEMS.get("systems", [])}
             raise
@@ -57,8 +57,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received systems data: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"System {system_sn} not found, returning dummy details")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"System {system_sn} not found,(HTTP {err.status}), returning dummy data")
                 return SYSTEM_DETAILS.get("default", {})
             raise
         except Exception as err:
@@ -78,8 +78,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received power meter data: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Power data for system {system_sn} not found, returning dummy data")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Power data for system {system_sn} not found,(HTTP {err.status}), returning dummy data")
                 return POWER_METER
             raise
         except Exception as err:
@@ -102,8 +102,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received energy meter: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Energy data for system {system_sn} not found, returning dummy data")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Energy data for system {system_sn} not found,(HTTP {err.status}), returning dummy data")
                 return ENERGY_METER
             raise
         except Exception as err:
@@ -124,8 +124,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received battery ups data: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Battery UPS data for system {system_sn} not found, returning default")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Battery UPS data for system {system_sn} not found, (HTTP {err.status}), returning dummy data")
                 return {"enable": False}
             raise
         except Exception as err:
@@ -147,7 +147,7 @@ class AsyncConfigEntryAuth:
             async with self._websession.put(url, headers=headers, json=payload) as resp:
                 resp.raise_for_status()
         except ClientResponseError as err:
-            if err.status == 404:
+            if err.status in (404, 400):
                 _LOGGER.warning(f"Cannot update battery UPS state for {system_sn}: not found")
             else:
                 raise
@@ -167,8 +167,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received charghing schedule: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Charging schedule for system {system_sn} not found, returning default schedule")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Charging schedule for system {system_sn} not found, (HTTP {err.status}), returning dummy data")
                 return CHARGING_SCHEDULE
             raise
         except Exception as err:
@@ -188,8 +188,8 @@ class AsyncConfigEntryAuth:
             async with self._websession.put(url, headers=headers, json=schedule) as resp:
                 resp.raise_for_status()
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Cannot update charging schedule for system {system_sn}: not found")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Cannot update charging schedule for system {system_sn}: not found(HTTP {err.status}), returning dummy data")
             else:
                 raise
         except Exception as err:
@@ -208,8 +208,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received discharghing schedule: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Discharging schedule for system {system_sn} not found, returning default schedule")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Discharging schedule for system {system_sn} not found, (HTTP {err.status}), returning dummy data")
                 return DISCHARGING_SCHEDULE
             raise
         except Exception as err:
@@ -231,8 +231,8 @@ class AsyncConfigEntryAuth:
                 _LOGGER.info("Received export limit: %s", data)
                 return data
         except ClientResponseError as err:
-            if err.status == 404:
-                _LOGGER.warning(f"Export limit for system {system_sn} not found, returning dummy data")
+            if err.status in (404, 400):
+                _LOGGER.warning(f"Export limit for system {system_sn} not found,(HTTP {err.status}), returning dummy data")
                 return EXPORT_LIMIT
             raise
         except Exception as err:
@@ -253,7 +253,7 @@ class AsyncConfigEntryAuth:
                 resp.raise_for_status()
                 return True
         except ClientResponseError as err:
-            if err.status == 404:
+            if err.status in (404, 400):
                 _LOGGER.warning(f"Cannot update export limit for system {system_sn}: not found")
             else:
                 raise
