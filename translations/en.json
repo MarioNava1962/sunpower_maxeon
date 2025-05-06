@@ -1,14 +1,65 @@
 {
   "entity": {
     "sensor": {
-      "sunpower_maxeon_system": {
-        "name": "SunPower Maxeon System",
-        "state": {
-          "normal": "Active",
-          "disabled": "Disabled",
-          "dummy_data": "API not working",
-          "unknown": "Unknown"
-        }
+      "battery_capacity": {
+        "name": "Battery Capacity"
+      },
+        "sunpower_maxeon_system": {
+          "name": "Sunpower Maxeon System",
+          "state": {
+              "normal": "Active",
+              "disabled": "Disabled",
+              "dummy_data": "API not working",
+              "unknown": "Unknown"
+          }
+        },
+      "battery_usable_capacity": {
+        "name": "Usable Battery Capacity"
+      },
+      "installed_pv_power": {
+        "name": "Installed PV Power"
+      },
+      "inverter_rated_power": {
+        "name": "Inverter Rated Power"
+      },
+      "soc": {
+        "name": "State of Charge"
+      },
+      "e_grid_export": {
+        "name": "Grid Export Energy"
+      },
+      "e_grid_import": {
+        "name": "Grid Import Energy"
+      },
+      "e_pv_generation": {
+        "name": "PV Generation"
+      },
+      "e_storage_charge": {
+        "name": "Storage Charge"
+      },
+      "e_storage_discharge": {
+        "name": "Storage Discharge"
+      },
+      "e_consumption": {
+        "name": "Total Consumption"
+      },
+      "p_pv": {
+        "name": "PV Power"
+      },
+      "p_consumption": {
+        "name": "Consumption Power"
+      },
+      "p_grid": {
+        "name": "Grid Power"
+      },
+      "p_storage": {
+        "name": "Storage Power"
+      },
+      "feedin_threshold": {
+        "name": "Feed-in Threshold"
+      },
+      "self_consumption_kw": {
+        "name": "Self-Consumption Power"
       }
     }
   },

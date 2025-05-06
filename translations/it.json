@@ -1,14 +1,65 @@
 {
   "entity": {
     "sensor": {
+      "battery_capacity": {
+        "name": "Capacità della Batteria"
+      },
       "sunpower_maxeon_system": {
-        "name": "SunPower Maxeon System",
+        "name": "Sistema SunPower Maxeon",
         "state": {
           "normal": "Attivo",
-          "disabled": "Inattivo",
-          "dummy_data": "API non funzionanti",
-          "unknown": "Unknown"
+          "disabled": "Disabilitato",
+          "dummy_data": "API non funzionante",
+          "unknown": "Sconosciuto"
         }
+      },
+      "battery_usable_capacity": {
+        "name": "Capacità Usabile della Batteria"
+      },
+      "installed_pv_power": {
+        "name": "Potenza Installata del PV"
+      },
+      "inverter_rated_power": {
+        "name": "Potenza Nominale dell'Inverter"
+      },
+      "soc": {
+        "name": "Stato di Carica"
+      },
+      "e_grid_export": {
+        "name": "Energia Esportata alla Rete"
+      },
+      "e_grid_import": {
+        "name": "Energia Importata dalla Rete"
+      },
+      "e_pv_generation": {
+        "name": "Generazione del PV"
+      },
+      "e_storage_charge": {
+        "name": "Carica della Batteria"
+      },
+      "e_storage_discharge": {
+        "name": "Scarica della Batteria"
+      },
+      "e_consumption": {
+        "name": "Consumo Totale"
+      },
+      "p_pv": {
+        "name": "Potenza del PV"
+      },
+      "p_consumption": {
+        "name": "Potenza di Consumo"
+      },
+      "p_grid": {
+        "name": "Potenza dalla Rete"
+      },
+      "p_storage": {
+        "name": "Potenza della Batteria"
+      },
+      "feedin_threshold": {
+        "name": "Soglia di Alimentazione"
+      },
+      "self_consumption_kw": {
+        "name": "Potenza di Auto-consumo"
       }
     }
   },
@@ -20,17 +71,17 @@
         "description": "Collega il tuo account SunPower Maxeon a Home Assistant per recuperare i dati del sistema."
       },
       "reauth_confirm": {
-        "title": "Autenticazione richiesta",
-        "description": "Per favore, riautenticati per continuare a utilizzare l'integrazione SunPower Maxeon."
+        "title": "Autenticazione Richiesta",
+        "description": "Per favore, ri-autenticati per continuare ad usare l'integrazione SunPower Maxeon."
       }
     },
     "error": {
-      "cannot_connect": "Impossibile connettersi all'API di SunPower Maxeon.",
+      "cannot_connect": "Impossibile connettersi all'API SunPower Maxeon.",
       "invalid_auth": "Credenziali di autenticazione non valide.",
       "unknown": "Si è verificato un errore sconosciuto."
     },
     "abort": {
-      "single_instance_allowed": "È consentita solo un'istanza dell'integrazione SunPower Maxeon.",
+      "single_instance_allowed": "È consentita solo una istanza dell'integrazione SunPower Maxeon.",
       "reauth_successful": "Autenticazione riuscita."
     }
   },
@@ -63,7 +114,7 @@
       },
       "discharging": {
         "title": "Programma di Scarica",
-        "description": "Configura quando la batteria deve essere scaricata e imposta un limite minimo residuo.",
+        "description": "Configura quando la batteria deve essere scaricata e imposta un limite minimo di carica residua.",
         "data": {
           "enable": "Abilita Scarica",
           "start_time_1": "Ora di Inizio (Slot 1)",
@@ -75,7 +126,7 @@
       },
       "export": {
         "title": "Limite di Esportazione",
-        "description": "Configura la quantità massima di energia che il tuo sistema può esportare in rete.",
+        "description": "Configura la quantità massima di potenza che il tuo sistema è autorizzato a esportare nella rete.",
         "data": {
           "export_rate": "Tasso Massimo di Esportazione (%)"
         }
