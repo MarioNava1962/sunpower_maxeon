@@ -1,7 +1,7 @@
 {
   "entity": {
     "sensor": {
-      "battery_capacity": {
+      "sunpower_maxeon_battery_capacity": {
         "name": "Battery Capacity"
       },        
       "battery_usable_capacity": {
