@@ -32,7 +32,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received systems: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning("Received 404, returning dummy systems data")
@@ -51,7 +53,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received systems data: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"System {system_sn} not found, returning dummy details")
@@ -70,7 +74,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received power meter data: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Power data for system {system_sn} not found, returning dummy data")
@@ -89,7 +95,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received energy meter: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Energy data for system {system_sn} not found, returning dummy data")
@@ -108,7 +116,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received battery ups data: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Battery UPS data for system {system_sn} not found, returning default")
@@ -149,7 +159,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received charghing schedule: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Charging schedule for system {system_sn} not found, returning default schedule")
@@ -188,7 +200,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received discharghing schedule: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Discharging schedule for system {system_sn} not found, returning default schedule")
@@ -229,7 +243,9 @@ class AsyncConfigEntryAuth:
         try:
             async with self._websession.get(url, headers=headers) as resp:
                 resp.raise_for_status()
-                return await resp.json()
+                data = await resp.json()
+                _LOGGER.info("Received export limit: %s", data)
+                return data
         except ClientResponseError as err:
             if err.status == 404:
                 _LOGGER.warning(f"Export limit for system {system_sn} not found, returning dummy data")
