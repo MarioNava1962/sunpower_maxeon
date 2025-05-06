@@ -349,7 +349,7 @@ class ExportLimitSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the export limit setting."""
 
     _attr_has_entity_name = True
-    _attr_name = "Export Limit"
+    
     _attr_unique_id = "sunpower_export_limit"
     _attr_icon = "mdi:transmission-tower-export"
 
@@ -374,3 +374,8 @@ class ExportLimitSensor(CoordinatorEntity, SensorEntity):
             "model": data.get("inverter_model", "Unknown"),
             "sw_version": data.get("inv_version"),
         }
+
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return "feedin_threshold"

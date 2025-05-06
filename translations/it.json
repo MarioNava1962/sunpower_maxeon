@@ -55,7 +55,16 @@
         "name": "Potenza Istantanea Batteria"
       },
       "feedin_threshold": {
-        "name": "Limite Esportazione"
+        "name": "Limite Esportazione",
+        "state": {
+            "enabled": "Attivo",
+            "disabled": "Disattivo"
+          },
+        "state_attributes": {
+            "export_rate": {
+              "name": "Soglia Limite Esportazione"
+            }
+          }
       },
       "discharging_schedule": {
           "name": "Programma Scarica Batteria",

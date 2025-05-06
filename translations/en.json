@@ -55,7 +55,16 @@
         "name": "Storage Power(Real-Time)"
       },
       "feedin_threshold": {
-        "name": "Export Threshold"
+        "name": "Export Threshold",
+        "state": {
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+          },
+        "state_attributes": {
+            "export_rate": {
+              "name": "Export Rate"
+            }
+          }
       },
       "discharging_schedule": {
           "name": "Discharging Schedule",
