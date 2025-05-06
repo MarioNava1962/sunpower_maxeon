@@ -162,7 +162,6 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         data = self.coordinator.data
         return {
             "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
-            "name": "SunPower Maxeon System",
             "manufacturer": "SunPower",
             "model": data.get("inverter_model", "Unknown"),
             "sw_version": data.get("inv_version"),
