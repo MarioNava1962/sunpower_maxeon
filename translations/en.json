@@ -39,12 +39,12 @@
         "title": "Charging Schedule",
         "description": "Configure when the battery should charge and set a maximum charge limit.",
         "data": {
-          "charging_enable": "Enable Charging",
-          "charging_start_time_1": "Start Time (Slot 1)",
-          "charging_end_time_1": "End Time (Slot 1)",
-          "charging_start_time_2": "Start Time (Slot 2)",
-          "charging_end_time_2": "End Time (Slot 2)",
-          "charging_max_soc": "Maximum State of Charge (%)"
+          "enable": "Enable Charging",
+          "start_time_1": "Start Time (Slot 1)",
+          "end_time_1": "End Time (Slot 1)",
+          "start_time_2": "Start Time (Slot 2)",
+          "end_time_2": "End Time (Slot 2)",
+          "max_soc": "Maximum State of Charge (%)"
         }
       }
     }
