@@ -6,12 +6,14 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    #not loading any switch for now, leaving the code here if needed in future
+    '''coordinator = hass.data[DOMAIN][entry.entry_id]
     system_sn = coordinator.data["system_sn"]
 
     async_add_entities([
         BatteryUPSSwitch(coordinator, system_sn)
-    ])
+    ])'''
+    return
 
 class BatteryUPSSwitch(CoordinatorEntity, SwitchEntity):
     def __init__(self, coordinator, system_sn):

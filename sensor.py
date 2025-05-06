@@ -5,7 +5,9 @@ from typing import Optional
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.const import DEVICE_CLASS_POWER
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorDeviceClass,
@@ -48,8 +50,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SunPowerDetailSensor(coordinator, "e_grid_export", "Total Grid Export", "Wh"),
         SunPowerDetailSensor(coordinator, "e_consumption", "Total Home Consumption", "Wh"),
 
-        #Charging Schedule Coordinator
+        #Schedule Coordinator
         ChargingScheduleSensor(coordinator),
+        DischargingScheduleSensor(coordinator),
+
+        #Config Sensors        
+        BatteryUPSBinarySensor(coordinator),
+        ExportLimitSensor(coordinator)
 
     ]
 
@@ -291,3 +298,61 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     def schedule(self) -> dict:
         return self.coordinator.data.get("discharging_schedule", {})
 
+class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
+    def __init__(self, coordinator):
+        super().__init__(coordinator)
+        self._attr_name = "Battery UPS Enabled"
+        self._attr_unique_id = "sunpower_ups"
+        self._attr_device_class = DEVICE_CLASS_POWER
+
+    @property
+    def is_on(self) -> bool:
+        """Return True if UPS is enabled."""
+        return self.coordinator.data.get("battery_ups", {}).get("enable", False)
+
+    @property
+    def icon(self) -> str:
+        """Return an icon based on UPS state."""
+        return "mdi:battery" if self.is_on else "mdi:battery-off"
+
+    @property
+    def device_info(self) -> dict:
+        """Return device metadata for this sensor."""
+        data = self.coordinator.data
+        return {
+            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
+            "name": "SunPower Maxeon System",
+            "manufacturer": "SunPower",
+            "model": data.get("inverter_model", "Unknown"),
+            "sw_version": data.get("inv_version"),
+        }
+
+class ExportLimitSensor(CoordinatorEntity, SensorEntity):
+    """Sensor for the export limit setting."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Export Limit"
+    _attr_unique_id = "sunpower_export_limit"
+    _attr_icon = "mdi:transmission-tower-export"
+
+    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+        super().__init__(coordinator)
+
+    @property
+    def state(self) -> str:
+        return "enabled" if self.coordinator.data.get("export_limit", {}).get("enable") else "disabled"
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return self.coordinator.data.get("export_limit", {})
+
+    @property
+    def device_info(self) -> dict:
+        data = self.coordinator.data
+        return {
+            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
+            "name": "SunPower Maxeon System",
+            "manufacturer": "SunPower",
+            "model": data.get("inverter_model", "Unknown"),
+            "sw_version": data.get("inv_version"),
+        }
