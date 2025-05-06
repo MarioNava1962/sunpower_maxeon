@@ -7,18 +7,18 @@
         "description": "Collega il tuo account SunPower Maxeon a Home Assistant per recuperare i dati del sistema."
       },
       "reauth_confirm": {
-        "title": "Autenticazione necessaria",
-        "description": "Per favore, esegui nuovamente l'autenticazione per continuare a utilizzare l'integrazione SunPower Maxeon."
+        "title": "Autenticazione richiesta",
+        "description": "Effettua nuovamente l'autenticazione per continuare a utilizzare l'integrazione SunPower Maxeon."
       }
     },
     "error": {
-      "cannot_connect": "Impossibile connettersi all'API di SunPower Maxeon.",
+      "cannot_connect": "Impossibile connettersi all'API SunPower Maxeon.",
       "invalid_auth": "Credenziali di autenticazione non valide.",
       "unknown": "Si è verificato un errore sconosciuto."
     },
     "abort": {
-      "single_instance_allowed": "È consentita solo un'istanza dell'integrazione SunPower Maxeon.",
-      "reauth_successful": "Autenticazione eseguita con successo."
+      "single_instance_allowed": "È consentita una sola istanza dell'integrazione SunPower Maxeon.",
+      "reauth_successful": "Autenticazione avvenuta con successo."
     }
   },
   "options": {
@@ -27,40 +27,45 @@
         "title": "Opzioni SunPower Maxeon"
       },
       "menu": {
-                "title": "Configurazioni",
-                "description": "Scegli una categoria da configurare.",
-                "menu_options": {
-                    "charging": "⚡ Programma di Carica",
-                    "discharging": "🔋 Programma di Scarica",
-                    "export": "📤 Limite di Esportazione"
-                }                
+        "title": "Configurazioni",
+        "description": "Scegli una categoria da configurare.",
+        "menu_options": {
+          "charging": "⚡ Programma di carica",
+          "discharging": "🔋 Programma di scarica",
+          "export": "📤 Limite di esportazione"
+        }
       },
       "charging": {
-        "title": "Programma di Carica",
-        "description": "Configura quando la batteria deve caricarsi e imposta un limite massimo di carica.",
+        "title": "Programma di carica",
+        "description": "Configura quando la batteria deve essere caricata e imposta un limite massimo di carica.",
         "data": {
-                  "enable": "Abilita Carica",
-                  "start_time_1": "Ora Inizio (Slot 1)",
-                  "end_time_1": "Ora Fine (Slot 1)",
-                  "start_time_2": "Ora Inizio (Slot 2)",
-                  "end_time_2": "Ora Fine (Slot 2)",
-                  "max_soc": "Stato di Carica Massimo (%)"
-                  }
-                
-              },
-        "discharging": {
-        "title": "Programma di Scarica",
-        "description": "Configura quando la batteria deve scaricarsi e imposta un limite minimo di carica residua.",
-        "data": {
-                  "enable": "Abilita Scarica",
-                  "start_time_1": "Ora Inizio (Slot 1)",
-                  "end_time_1": "Ora Fine (Slot 1)",
-                  "start_time_2": "Ora Inizio (Slot 2)",
-                  "end_time_2": "Ora Fine (Slot 2)",
-                  "min_soc": "Stato di Carica Minimo (%)"
-                  }
-                
-              }
+          "enable": "Abilita la carica",
+          "start_time_1": "Orario di inizio (Fascia 1)",
+          "end_time_1": "Orario di fine (Fascia 1)",
+          "start_time_2": "Orario di inizio (Fascia 2)",
+          "end_time_2": "Orario di fine (Fascia 2)",
+          "max_soc": "Stato di carica massimo (%)"
         }
+      },
+      "discharging": {
+        "title": "Programma di scarica",
+        "description": "Configura quando la batteria deve essere scaricata e imposta un limite minimo di carica residua.",
+        "data": {
+          "enable": "Abilita la scarica",
+          "start_time_1": "Orario di inizio (Fascia 1)",
+          "end_time_1": "Orario di fine (Fascia 1)",
+          "start_time_2": "Orario di inizio (Fascia 2)",
+          "end_time_2": "Orario di fine (Fascia 2)",
+          "min_soc": "Stato di carica minimo (%)"
+        }
+      },
+      "export": {
+        "title": "Limite di esportazione",
+        "description": "Configura la quantità massima di energia che il sistema può esportare verso la rete.",
+        "data": {
+          "export_rate": "Tasso massimo di esportazione (%)"
+        }
+      }
     }
+  }
 }

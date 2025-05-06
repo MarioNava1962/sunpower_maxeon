@@ -58,6 +58,13 @@
           "end_time_2": "End Time (Slot 2)",
           "min_soc": "Min State of Charge (%)"
         }
+      },
+      "export": {
+        "title": "Export Limit",
+        "description": "Configure the maximum amount of power your system is allowed to export to the grid.",
+        "data": {
+          "export_rate": "Maximum Export Rate (%)"
+        }
       }
     }
   }

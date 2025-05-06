@@ -47,8 +47,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if system_sn:
         try:
             charging_schedule = await auth.async_get_charging_schedule(system_sn)
-            discharging_schedule = await auth.async_get_discharging_schedule
+            discharging_schedule = await auth.async_get_discharging_schedule(system_sn)
+            export_limit = await auth.async_get_export_limit(system_sn)            
             coordinator.data["charging_schedule"] = charging_schedule
+            coordinator.data["discharging_schedule"] = discharging_schedule
+            coordinator.data["export_limit"] = export_limit
         except Exception as err:
             _LOGGER.warning("Failed to fetch charging schedule for system %s: %s", system_sn, err)
     else:

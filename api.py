@@ -2,7 +2,7 @@ import logging
 from aiohttp import ClientSession, ClientResponseError
 from homeassistant.helpers import config_entry_oauth2_flow
 
-from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER, ENERGY_METER, CHARGING_SCHEDULE, DISCHARGING_SCHEDULE
+from .const import SYSTEMS, SYSTEM_DETAILS, POWER_METER, ENERGY_METER, CHARGING_SCHEDULE, DISCHARGING_SCHEDULE, EXPORT_LIMIT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -217,3 +217,45 @@ class AsyncConfigEntryAuth:
                 raise
         except Exception as err:
             _LOGGER.error("Failed to update discharging schedule: %s", err)
+
+    async def get_export_limit(self, system_sn: str) -> dict:
+        """Fetch the current export limit for the system."""
+        token = await self.async_get_access_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/export_limit"
+        try:
+            async with self._websession.get(url, headers=headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Export limit for system {system_sn} not found, returning dummy data")
+                return EXPORT_LIMIT
+            raise
+        except Exception as err:
+            _LOGGER.error("Failed to fetch export limit: %s", err)
+            return EXPORT_LIMIT
+        
+    async def set_export_limit(self, system_sn: str, export_rate: int) -> bool:
+        """Set a new export limit (in %) for the system."""
+        token = await self.async_get_access_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/export_limit"
+        payload = {"export_rate": export_rate}
+        try:
+            async with self._websession.put(url, headers=headers, json=payload) as resp:
+                resp.raise_for_status()
+                return True
+        except ClientResponseError as err:
+            if err.status == 404:
+                _LOGGER.warning(f"Cannot update export limit for system {system_sn}: not found")
+            else:
+                raise
+        except Exception as err:
+            _LOGGER.error("Failed to update export limit: %s", err)

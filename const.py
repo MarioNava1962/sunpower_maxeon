@@ -87,3 +87,8 @@ DISCHARGING_SCHEDULE = {
     "end_time_2": "16:00",
     "min_soc": 20
 }
+
+EXPORT_LIMIT = {
+  "system_sn": "default",
+  "export_rate": 80
+}

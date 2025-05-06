@@ -174,13 +174,48 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         )
     
     async def async_step_export(self, user_input: dict[str, Any] | None = None):
-        """Configure export limit (placeholder)."""
-        # Replace this with actual form logic later
+        """Configure export limit."""
+        websession = async_get_clientsession(self.hass)
+        implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
+            self.hass, self.config_entry
+        )
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
+        api = AsyncConfigEntryAuth(websession, oauth_session)
+
+        systems = await api.async_get_systems()
+        if not systems.get("systems"):
+            raise ValueError("No systems returned from API")
+
+        system_sn = systems["systems"][0].get("system_sn")
+        if not system_sn:
+            raise ValueError("System SN missing in API response")
+
+        export = await api.async_get_export_limit(system_sn)
+
+        if user_input is not None:
+            await api.async_set_export_limit(system_sn, {
+                "export_rate": user_input["export_rate"]
+            })
+            return self.async_create_entry(title="Export Limit", data={})
+
         return self.async_show_form(
             step_id="export",
-            data_schema=vol.Schema({}),
-            description_placeholders={"info": "Export configuration is not implemented yet."}
+            data_schema=vol.Schema({
+                vol.Required(
+                    "export_rate",
+                    default=export.get("export_rate", 80)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=100,
+                        step=1,
+                        mode="box",
+                        unit_of_measurement="%",
+                    )
+                ),
+            }),
         )
+
 
     async def async_step_discharging(self, user_input: dict[str, Any] | None = None):
         """Configure discharging schedule."""

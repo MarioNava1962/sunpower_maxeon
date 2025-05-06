@@ -46,6 +46,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
             battery_ups_data = await self.api.get_battery_ups_state(system_sn)
             charging_schedule = await self.api.async_get_charging_schedule(system_sn)
             discharging_schedule = await self.api.async_get_discharging_schedule(system_sn)
+            export_limit = await self.api.async_get_export_limit(system_sn)
 
             merged = {
                 **system,
@@ -55,7 +56,9 @@ class SunPowerCoordinator(DataUpdateCoordinator):
                 "battery_ups": battery_ups_data,
                 "charging_schedule": charging_schedule,
                 "discharging_schedule": discharging_schedule,
+                "export_limit" : export_limit,
                 "system_sn": system_sn,
+                
             }
 
             return merged
@@ -68,5 +71,7 @@ class SunPowerCoordinator(DataUpdateCoordinator):
                 **ENERGY_METER,
                 "battery_ups": {"enable": False},
                 "charging_schedule": {},  # Fallback default
-                "system_sn": "unknown",
+                "export_limit" : {},
+                "system_sn": "default",
+
             }
