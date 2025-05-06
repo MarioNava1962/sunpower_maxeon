@@ -4,12 +4,12 @@
       "sunpower_maxeon_system": {
         "name": "Sunpower Maxeon System",
         "state": {
-            "enabled": "Enabled",
+            "normal": "Active",
             "disabled": "Disabled",
             "dummy_data": "API not working"
           }
       },  
-      "sunpower_maxeon_battery_capacity": {
+      "battery_capacity": {
         "name": "Battery Capacity"
       },        
       "battery_usable_capacity": {
