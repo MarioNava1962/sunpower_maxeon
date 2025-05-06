@@ -1,6 +1,14 @@
 {
   "entity": {
     "sensor": {
+      "sunpower_maxeon_system": {
+        "name": "Sunpower Maxeon System",
+        "state": {
+            "enabled": "Attivo",
+            "disabled": "Disattivo",
+            "dummy_data": "API non funzionanti"
+          }
+      },  
       "battery_capacity": {
         "name": "Capacità della Batteria"
       },

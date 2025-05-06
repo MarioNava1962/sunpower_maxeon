@@ -69,7 +69,7 @@ class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
 
     def __init__(self, coordinator: SunPowerCoordinator) -> None:
         super().__init__(coordinator)
-        self._attr_name = "SunPower Maxeon System"
+        
         self._attr_unique_id = "sunpower_device_info"
         self._attr_should_poll = False
         self._attr_icon = "mdi:solar-power"
@@ -100,6 +100,11 @@ class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
     def extra_state_attributes(self) -> dict:
         """Expose all API fields as attributes."""
         return self.coordinator.data
+    
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return "sunpower_maxeon_system"
 
 
 class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
@@ -212,7 +217,6 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
         if self._key.startswith("e_"):
             return "mdi:lightning-bolt-circle"
         return "mdi:gauge"
-
     
 class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the SunPower charging schedule."""
