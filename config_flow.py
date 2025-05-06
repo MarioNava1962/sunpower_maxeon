@@ -81,7 +81,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for SunPower Maxeon."""
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        self.config_entry = config_entry
+        super().__init__()
+        self._entry = config_entry
 
     async def async_step_init(self, user_input=None):
         """Show the menu with configuration sections."""
@@ -102,9 +103,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Configure charging schedule."""
         websession = async_get_clientsession(self.hass)
         implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-            self.hass, self.config_entry
+            self.hass, self._entry
         )
-        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
         api = AsyncConfigEntryAuth(websession, oauth_session)
 
         systems = await api.async_get_systems()
@@ -177,9 +178,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Configure export limit."""
         websession = async_get_clientsession(self.hass)
         implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-            self.hass, self.config_entry
+            self.hass, self._entry
         )
-        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
         api = AsyncConfigEntryAuth(websession, oauth_session)
 
         systems = await api.async_get_systems()
@@ -221,9 +222,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Configure discharging schedule."""
         websession = async_get_clientsession(self.hass)
         implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
-            self.hass, self.config_entry
+            self.hass, self._entry
         )
-        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self.config_entry, implementation)
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
         api = AsyncConfigEntryAuth(websession, oauth_session)
 
         systems = await api.async_get_systems()
