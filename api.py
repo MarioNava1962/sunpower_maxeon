@@ -218,7 +218,7 @@ class AsyncConfigEntryAuth:
         except Exception as err:
             _LOGGER.error("Failed to update discharging schedule: %s", err)
 
-    async def get_export_limit(self, system_sn: str) -> dict:
+    async def async_get_export_limit(self, system_sn: str) -> dict:
         """Fetch the current export limit for the system."""
         token = await self.async_get_access_token()
         headers = {
@@ -239,7 +239,7 @@ class AsyncConfigEntryAuth:
             _LOGGER.error("Failed to fetch export limit: %s", err)
             return EXPORT_LIMIT
         
-    async def set_export_limit(self, system_sn: str, export_rate: int) -> bool:
+    async def async_set_export_limit(self, system_sn: str, export_rate: int) -> bool:
         """Set a new export limit (in %) for the system."""
         token = await self.async_get_access_token()
         headers = {
