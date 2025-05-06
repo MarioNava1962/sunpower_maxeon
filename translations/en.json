@@ -65,6 +65,13 @@
         "data": {
           "export_rate": "Maximum Export Rate (%)"
         }
+      },
+      "ups": {
+        "title": "UPS State",
+        "description": "Enable/Disable the UPS Battery.",
+        "data": {
+          "enable": "Enable UPS"
+        }
       }
     }
   }

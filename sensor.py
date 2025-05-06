@@ -219,6 +219,18 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     def state(self) -> str:
         schedule = self.schedule
         return "enabled" if schedule.get("enable") else "disabled"
+    
+    @property
+    def device_info(self) -> dict:
+        """Return device metadata for the system."""
+        data = self.coordinator.data
+        return {
+            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
+            "name": "SunPower Maxeon System",
+            "manufacturer": "SunPower",
+            "model": data.get("inverter_model", "Unknown"),
+            "sw_version": data.get("inv_version"),
+        }
 
     @property
     def extra_state_attributes(self) -> dict:
@@ -234,3 +246,48 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     @property
     def schedule(self) -> dict:
         return self.coordinator.data.get("charging_schedule", {})
+    
+class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
+    """Sensor for the SunPower discharging schedule."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Discharging Schedule"
+    _attr_unique_id = "sunpower_discharging_schedule"
+    _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
+
+    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+
+    @property
+    def state(self) -> str:
+        schedule = self.schedule
+        return "enabled" if schedule.get("enable") else "disabled"
+    
+    @property
+    def device_info(self) -> dict:
+        """Return device metadata for the system."""
+        data = self.coordinator.data
+        return {
+            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
+            "name": "SunPower Maxeon System",
+            "manufacturer": "SunPower",
+            "model": data.get("inverter_model", "Unknown"),
+            "sw_version": data.get("inv_version"),
+        }
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        schedule = self.schedule
+        return {
+            "start_time_1": schedule.get("start_time_1"),
+            "end_time_1": schedule.get("end_time_1"),
+            "start_time_2": schedule.get("start_time_2"),
+            "end_time_2": schedule.get("end_time_2"),
+            "min_soc": schedule.get("min_soc"),
+        }
+
+    @property
+    def schedule(self) -> dict:
+        return self.coordinator.data.get("discharging_schedule", {})
+

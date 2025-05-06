@@ -65,6 +65,13 @@
         "data": {
           "export_rate": "Tasso massimo di esportazione (%)"
         }
+      },
+      "ups": {
+        "title": "Configura UPS",
+        "description": "Attiva/Disattiva UPS backup.",
+        "data": {
+          "enable": "Attiva UPS"
+        }
       }
     }
   }

@@ -96,6 +96,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 "charging",
                 "discharging",
                 "export",
+                "ups"
             },
         )
 
@@ -292,3 +293,36 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 ),
             }),
         )
+    
+    async def async_step_ups(self, user_input: dict[str, Any] | None = None):
+        """Configure UPS."""
+        websession = async_get_clientsession(self.hass)
+        implementation = await config_entries.config_entry_oauth2_flow.async_get_config_entry_implementation(
+            self.hass, self._entry
+        )
+        oauth_session = config_entries.config_entry_oauth2_flow.OAuth2Session(self.hass, self._entry, implementation)
+        api = AsyncConfigEntryAuth(websession, oauth_session)
+
+        systems = await api.async_get_systems()
+        if not systems.get("systems"):
+            raise ValueError("No systems returned from API")
+
+        system_sn = systems["systems"][0].get("system_sn")
+        if not system_sn:
+            raise ValueError("System SN missing in API response")
+
+        ups = await api.get_battery_ups_state(system_sn)
+
+        if user_input is not None:
+            await api.set_battery_ups_state(system_sn, {
+                "enable": user_input["enable"]
+            })
+            return self.async_create_entry(title="UPS State", data={})
+        
+        return self.async_show_form(
+            step_id="ups",
+            data_schema=vol.Schema({
+                vol.Required("enable", default=ups.get("enable", True)): BooleanSelector()
+            }),
+        )
+
