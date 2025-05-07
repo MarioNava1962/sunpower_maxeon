@@ -79,7 +79,7 @@ class SunPowerEnergySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Senso
         super().__init__(coordinator)
         self._key = key
         self._attr_unique_id = f"s-m_{key}"
-        self._attr_should_poll = True
+        self._attr_should_poll = False
         self._attr_native_unit_of_measurement = unit
         self._attr_device_class = SensorDeviceClass.ENERGY
         self._attr_state_class = SensorStateClass.TOTAL_INCREASING
@@ -123,14 +123,14 @@ class SunPowerEnergySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Senso
         }
         return icon_map.get(self._key, "mdi:gauge")
     
-class SunPowerPowerSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], SensorEntity):
+class SunPowerPowerSensor(CoordinatorEntity[SunPowerRealtimeCoordinator], SensorEntity):
     """Sensor entity for real-time SunPower power readings and battery SoC."""
 
     _attr_has_entity_name = True
 
     def __init__(
         self,
-        coordinator: SunPowerPeriodicCoordinator,
+        coordinator: SunPowerRealtimeCoordinator,
         key: str,
         unit: Optional[str] = "W",
     ) -> None:
@@ -138,7 +138,7 @@ class SunPowerPowerSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Sensor
         self._key = key
         self._attr_native_unit_of_measurement = unit
         self._attr_unique_id = f"s-m_{key}"
-        self._attr_should_poll = True
+        self._attr_should_poll = False
 
         if key == "soc":
             self._attr_device_class = SensorDeviceClass.BATTERY
@@ -193,7 +193,7 @@ class SunPowerPowerSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Sensor
         }
         return icon_map.get(self._key, "mdi:gauge")
     
-class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
+class SunPowerDetailSensor(CoordinatorEntity[SunPowerFullCoordinator], SensorEntity):
     """Entity to expose static SunPower system details."""
 
     _attr_has_entity_name = True
@@ -251,7 +251,7 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
             return "mdi:solar-power"
         return "mdi:gauge"
 
-class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
+class SunPowerSystemInfo(CoordinatorEntity[SunPowerFullCoordinator], SensorEntity):
     """Entity to expose SunPower system status and metadata."""
 
     def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
@@ -294,7 +294,7 @@ class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
         return "sunpower_maxeon_system"
 
    
-class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
+class ChargingScheduleSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], SensorEntity):
     """Sensor for the SunPower charging schedule."""
 
     _attr_has_entity_name = True
@@ -302,7 +302,7 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     _attr_unique_id = "sunpower_charging_schedule"
     _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
 
-    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerPeriodicCoordinator) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
 
@@ -342,7 +342,7 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
         """Return the translation key to localize the entity name."""
         return "charging_schedule"
     
-class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
+class DischargingScheduleSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], SensorEntity):
     """Sensor for the SunPower discharging schedule."""
 
     _attr_has_entity_name = True
@@ -350,7 +350,7 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     _attr_unique_id = "sunpower_discharging_schedule"
     _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
 
-    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerPeriodicCoordinator) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
 
@@ -391,10 +391,10 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
         """Return the translation key to localize the entity name."""
         return "discharging_schedule"
 
-class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class BatteryUPSBinarySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], BinarySensorEntity):
     _attr_has_entity_name = True
     
-    def __init__(self, coordinator):
+    def __init__(self, coordinator: SunPowerPeriodicCoordinator):
         super().__init__(coordinator)
         
         self._attr_unique_id = "sunpower_ups"
@@ -427,7 +427,7 @@ class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
         """Return the translation key to localize the entity name."""
         return "ups_enabled"
 
-class ExportLimitSensor(CoordinatorEntity, SensorEntity):
+class ExportLimitSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], SensorEntity):
     """Sensor for the export limit setting."""
 
     _attr_has_entity_name = True
@@ -435,7 +435,7 @@ class ExportLimitSensor(CoordinatorEntity, SensorEntity):
     _attr_unique_id = "sunpower_export_limit"
     _attr_icon = "mdi:transmission-tower-export"
 
-    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerPeriodicCoordinator) -> None:
         super().__init__(coordinator)
 
     @property
