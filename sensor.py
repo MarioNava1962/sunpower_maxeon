@@ -158,7 +158,7 @@ class SunPowerPowerSensor(CoordinatorEntity[SunPowerRealtimeCoordinator], Sensor
     @property
     def native_value(self) -> Optional[float | int | str]:
         """Return the sensor's current value."""
-        return self.coordinator.shared_data.get("energy", {}).get(self._key)
+        return self.coordinator.shared_data.get("power", {}).get(self._key)
 
     @property
     def available(self) -> bool:
@@ -224,7 +224,7 @@ class SunPowerDetailSensor(CoordinatorEntity[SunPowerFullCoordinator], SensorEnt
     @property
     def native_value(self) -> Optional[float | int | str]:
         """Return the value for the specific system detail field."""
-        return self.coordinator.data.get(self._key)
+        return self.coordinator.data.get("details", {}).get(self._key)
 
     @property
     def available(self) -> bool:
@@ -264,7 +264,7 @@ class SunPowerSystemInfo(CoordinatorEntity[SunPowerFullCoordinator], SensorEntit
     @property
     def native_value(self) -> str:
         """Return the system status as the main state."""
-        return self.coordinator.data.get("status", "unknown")
+        return self.coordinator.data.get("system", {}).get("status", "unknown")
 
     @property
     def available(self) -> bool:
@@ -279,8 +279,8 @@ class SunPowerSystemInfo(CoordinatorEntity[SunPowerFullCoordinator], SensorEntit
             "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
             "name": "SunPower Maxeon System",
             "manufacturer": "SunPower",
-            "model": data.get("inverter_model", "Unknown"),
-            "sw_version": data.get("inv_version"),
+            "model": data.get("details", {}).get("inverter_model", "Unknown"),
+            "sw_version": data.get("details", {}).get("inv_version"),
         }
 
     @property
