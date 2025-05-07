@@ -74,7 +74,7 @@ class SunPowerEnergySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Senso
         self,
         coordinator: SunPowerPeriodicCoordinator,
         key: str,
-        unit: Optional[str] = "Wh",
+        unit: Optional[str] = "kWh",
     ) -> None:
         super().__init__(coordinator)
         self._key = key
@@ -132,6 +132,7 @@ class SunPowerPowerSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Sensor
         self,
         coordinator: SunPowerPeriodicCoordinator,
         key: str,
+        unit: Optional[str] = "W",
     ) -> None:
         super().__init__(coordinator)
         self._key = key
