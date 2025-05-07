@@ -3,7 +3,7 @@
 import logging
 from datetime import timedelta
 
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from .api import AsyncConfigEntryAuth
 from .const import SYSTEM_DETAILS, POWER_METER, ENERGY_METER, shared_data  # Ensure ENERGY_METER is defined
 
