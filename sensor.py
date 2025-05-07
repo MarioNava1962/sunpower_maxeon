@@ -23,9 +23,9 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up SunPower Maxeon system sensors."""
     data = hass.data[DOMAIN][entry.entry_id]
-    periodic_coordinator: SunPowerPeriodicCoordinator = data["periodic_coordinator"]
-    realtime_coordinator: SunPowerRealtimeCoordinator = data["realtime_coordinator"]
-    full_coordinator: SunPowerFullCoordinator = data["full_coordinator"]
+    periodic_coordinator: SunPowerPeriodicCoordinator = data["periodicr"]
+    realtime_coordinator: SunPowerRealtimeCoordinator = data["realtime"]
+    full_coordinator: SunPowerFullCoordinator = data["full"]
 
     entities = [
         # Metadata / status
