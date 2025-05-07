@@ -253,7 +253,8 @@ class SunPowerDetailSensor(CoordinatorEntity[SunPowerFullCoordinator], SensorEnt
 
 class SunPowerSystemInfo(CoordinatorEntity[SunPowerFullCoordinator], SensorEntity):
     """Entity to expose SunPower system status and metadata."""
-
+    _attr_has_entity_name = True
+    
     def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
         super().__init__(coordinator)
         

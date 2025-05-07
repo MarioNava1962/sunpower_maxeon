@@ -4,7 +4,7 @@
       "sunpower_maxeon_system": {
         "name": "Sunpower Maxeon System",
         "state": {
-            "normal": "Active",
+            "Normal": "Active",
             "disabled": "Disabled",
             "dummy_data": "API not working"
           }
