@@ -1,5 +1,5 @@
 """Constants for the SunPower Maxeon integration."""
-
+from typing import Optional, Final
 DOMAIN = "sunpower_maxeon"
 
 OAUTH2_AUTHORIZE = "https://api.sunpower.maxeon.com/v1/authorize"
@@ -92,3 +92,24 @@ EXPORT_LIMIT = {
   
   "export_rate": 80
 }
+
+shared_data = {
+    "system_sn": None,
+    "system": {},
+    "details": {},
+    "power": {},
+    "energy": {},
+    "battery_ups": {},
+    "charging_schedule": {},
+    "discharging_schedule": {},
+    "export_limit": {},
+}
+
+ENERGY_SENSOR_KEYS: Final[list[str]] = [
+    "e_pv_generation",
+    "e_storage_charge",
+    "e_storage_discharge",
+    "e_grid_import",
+    "e_grid_export",
+    "e_consumption",
+]

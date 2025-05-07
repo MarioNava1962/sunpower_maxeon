@@ -14,58 +14,245 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 
-from .const import DOMAIN
-from .coordinator import SunPowerCoordinator
+from .const import DOMAIN, ENERGY_SENSOR_KEYS
+from .coordinator import SunPowerFullCoordinator, SunPowerRealtimeCoordinator, SunPowerPeriodicCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up SunPower Maxeon system sensors."""
-    coordinator: SunPowerCoordinator = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
+    periodic_coordinator: SunPowerPeriodicCoordinator = data["periodic_coordinator"]
+    realtime_coordinator: SunPowerRealtimeCoordinator = data["realtime_coordinator"]
+    full_coordinator: SunPowerFullCoordinator = data["full_coordinator"]
 
     entities = [
         # Metadata / status
-        SunPowerSystemInfo(coordinator),
+        SunPowerSystemInfo(full_coordinator),
 
         # Static system detail sensors
-        SunPowerDetailSensor(coordinator, "battery_capacity",  "kWh"),
-        SunPowerDetailSensor(coordinator, "installed_pv_power",  "kW"),
-        SunPowerDetailSensor(coordinator, "inverter_rated_power",  "kW"),
-        SunPowerDetailSensor(coordinator, "battery_usable_capacity",  "kWh"),
-        SunPowerDetailSensor(coordinator, "feedin_threshold",  "%"),
+        SunPowerDetailSensor(full_coordinator, "battery_capacity",  "kWh"),
+        SunPowerDetailSensor(full_coordinator, "installed_pv_power",  "kW"),
+        SunPowerDetailSensor(full_coordinator, "inverter_rated_power",  "kW"),
+        SunPowerDetailSensor(full_coordinator, "battery_usable_capacity",  "kWh"),
+        SunPowerDetailSensor(full_coordinator, "feedin_threshold",  "%"),
 
         #Power Meter Sensors
-        SunPowerDetailSensor(coordinator, "p_pv",  "W"),
-        SunPowerDetailSensor(coordinator, "p_grid",  "W"),
-        SunPowerDetailSensor(coordinator, "p_storage",  "W"),
-        SunPowerDetailSensor(coordinator, "p_consumption",  "W"),
-        SunPowerDetailSensor(coordinator, "soc",  "%"),
+        SunPowerPowerSensor(realtime_coordinator, "p_pv",  "W"),
+        SunPowerPowerSensor(realtime_coordinator, "p_grid",  "W"),
+        SunPowerPowerSensor(realtime_coordinator, "p_storage",  "W"),
+        SunPowerPowerSensor(realtime_coordinator, "p_consumption",  "W"),
+        SunPowerPowerSensor(realtime_coordinator, "soc",  "%"),
 
         #Energy Meter Sensors
-        SunPowerDetailSensor(coordinator, "e_pv_generation",  "kWh"),
-        SunPowerDetailSensor(coordinator, "e_storage_charge",  "kWh"),
-        SunPowerDetailSensor(coordinator, "e_storage_discharge", "kWh"),
-        SunPowerDetailSensor(coordinator, "e_grid_import", "kWh"),
-        SunPowerDetailSensor(coordinator, "e_grid_export",  "kWh"),
-        SunPowerDetailSensor(coordinator, "e_consumption",  "kWh"),
+        SunPowerEnergySensor(periodic_coordinator, "e_pv_generation",  "kWh"),
+        SunPowerEnergySensor(periodic_coordinator, "e_storage_charge",  "kWh"),
+        SunPowerEnergySensor(periodic_coordinator, "e_storage_discharge", "kWh"),
+        SunPowerEnergySensor(periodic_coordinator, "e_grid_import", "kWh"),
+        SunPowerEnergySensor(periodic_coordinator, "e_grid_export",  "kWh"),
+        SunPowerEnergySensor(periodic_coordinator, "e_consumption",  "kWh"),
 
         #Schedule Coordinator
-        ChargingScheduleSensor(coordinator),
-        DischargingScheduleSensor(coordinator),
+        ChargingScheduleSensor(periodic_coordinator),
+        DischargingScheduleSensor(periodic_coordinator),
 
         #Config Sensors        
-        BatteryUPSBinarySensor(coordinator),
-        ExportLimitSensor(coordinator)
+        BatteryUPSBinarySensor(periodic_coordinator),
+        ExportLimitSensor(periodic_coordinator)
 
     ]
 
     async_add_entities(entities, True)
 
+class SunPowerEnergySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], SensorEntity):
+    """Entity to expose specific SunPower system energy metrics."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: SunPowerPeriodicCoordinator,
+        key: str,
+        unit: Optional[str] = "Wh",
+    ) -> None:
+        super().__init__(coordinator)
+        self._key = key
+        self._attr_unique_id = f"s-m_{key}"
+        self._attr_should_poll = True
+        self._attr_native_unit_of_measurement = unit
+        self._attr_device_class = SensorDeviceClass.ENERGY
+        self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+
+    @property
+    def translation_key(self) -> str:
+        """Return a key for translation/localization."""
+        return self._key
+
+    @property
+    def native_value(self) -> Optional[float | int | str]:
+        """Return the sensor's current value."""
+        return self.coordinator.data.get("energy", {}).get(self._key)
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self.coordinator.last_update_success
+
+    @property
+    def device_info(self) -> dict:
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
+        return {
+            "identifiers": {(DOMAIN, system_sn)},
+            "manufacturer": "SunPower",
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
+        }
+
+    @property
+    def icon(self) -> str:
+        """Return an MDI icon based on the key."""
+        icon_map = {
+            "e_pv_generation": "mdi:solar-panel",
+            "e_storage_charge": "mdi:battery-arrow-up",
+            "e_storage_discharge": "mdi:battery-arrow-down",
+            "e_grid_import": "mdi:transmission-tower-import",
+            "e_grid_export": "mdi:transmission-tower-export",
+            "e_consumption": "mdi:home-lightning-bolt",
+        }
+        return icon_map.get(self._key, "mdi:gauge")
+    
+class SunPowerPowerSensor(CoordinatorEntity[SunPowerPeriodicCoordinator], SensorEntity):
+    """Sensor entity for real-time SunPower power readings and battery SoC."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: SunPowerPeriodicCoordinator,
+        key: str,
+    ) -> None:
+        super().__init__(coordinator)
+        self._key = key
+        self._attr_unique_id = f"s-m_{key}"
+        self._attr_should_poll = True
+
+        if key == "soc":
+            self._attr_device_class = SensorDeviceClass.BATTERY
+            self._attr_native_unit_of_measurement = "%"
+            self._attr_icon = "mdi:battery"
+        else:
+            self._attr_device_class = SensorDeviceClass.POWER
+            self._attr_native_unit_of_measurement = "W"
+
+        self._attr_state_class = SensorStateClass.MEASUREMENT
+
+    @property
+    def translation_key(self) -> str:
+        """Return a key for translation/localization."""
+        return self._key
+
+    @property
+    def native_value(self) -> Optional[float | int | str]:
+        """Return the sensor's current value."""
+        return self.coordinator.shared_data.get("energy", {}).get(self._key)
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self.coordinator.last_update_success
+
+    @property
+    def device_info(self) -> dict:
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
+        return {
+            "identifiers": {(DOMAIN, system_sn)},
+            "manufacturer": "SunPower",
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
+        }
+
+    @property
+    def icon(self) -> str:
+        """Return an MDI icon based on the key."""
+        if self._key == "soc":
+            soc = self.native_value
+            if soc is None:
+                return "mdi:battery-unknown"
+            soc = max(0, min(100, int(soc)))
+            return f"mdi:battery-{soc // 10 * 10}" if soc < 100 else "mdi:battery"
+        icon_map = {
+            "p_pv": "mdi:solar-panel",
+            "p_consumption": "mdi:home-lightning-bolt",
+            "p_grid": "mdi:transmission-tower-export",
+            "p_storage": "mdi:battery",
+        }
+        return icon_map.get(self._key, "mdi:gauge")
+    
+class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
+    """Entity to expose static SunPower system details."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+
+    def __init__(
+        self,
+        coordinator: SunPowerFullCoordinator,
+        key: str,
+        unit: Optional[str] = None,
+    ) -> None:
+        super().__init__(coordinator)
+        self._key = key
+        self._attr_unique_id = f"sunpower_{key}"
+        self._attr_native_unit_of_measurement = unit
+
+        # Assign device class if applicable
+        if key in ["battery_capacity", "battery_usable_capacity"]:
+            self._attr_device_class = SensorDeviceClass.ENERGY
+        elif key in ["installed_pv_power", "inverter_rated_power"]:
+            self._attr_device_class = SensorDeviceClass.POWER
+
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key to localize the entity name."""
+        return self._key
+
+    @property
+    def native_value(self) -> Optional[float | int | str]:
+        """Return the value for the specific system detail field."""
+        return self.coordinator.data.get(self._key)
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self.coordinator.last_update_success
+
+    @property
+    def device_info(self) -> dict:
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
+        return {
+            "identifiers": {(DOMAIN, system_sn)},
+            "manufacturer": "SunPower",
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
+        }
+
+    @property
+    def icon(self) -> str:
+        """Return an appropriate icon for the sensor."""
+        if "battery" in self._key:
+            return "mdi:battery"
+        if "pv_power" in self._key or "inverter" in self._key:
+            return "mdi:solar-power"
+        return "mdi:gauge"
+
 class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
     """Entity to expose SunPower system status and metadata."""
 
-    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
         super().__init__(coordinator)
         
         self._attr_unique_id = "sunpower_device_info"
@@ -97,124 +284,14 @@ class SunPowerSystemInfo(CoordinatorEntity, SensorEntity):
     @property
     def extra_state_attributes(self) -> dict:
         """Expose all API fields as attributes."""
-        return self.coordinator.data
+        return self.coordinator.shared_data
     
     @property
     def translation_key(self) -> str:
         """Return the translation key to localize the entity name."""
         return "sunpower_maxeon_system"
 
-class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
-    """Entity to expose specific SunPower system detail fields."""
-
-    _attr_has_entity_name = True
-
-    def __init__(
-        self,
-        coordinator: SunPowerCoordinator,
-        key: str,
-        unit: Optional[str] = None,
-    ) -> None:
-        super().__init__(coordinator)
-        self._key = key
-        self._attr_unique_id = f"s-m_{key}"
-        self._attr_should_poll = True
-        self._attr_native_unit_of_measurement = unit
-
-        # Assign device class and state class if applicable
-        if key in ["battery_capacity", "battery_usable_capacity"]:
-            self._attr_device_class = SensorDeviceClass.ENERGY
-            self._attr_state_class = SensorStateClass.TOTAL
-        elif key in ["installed_pv_power", "inverter_rated_power"]:
-            self._attr_device_class = SensorDeviceClass.POWER
-            self._attr_state_class = SensorStateClass.MEASUREMENT
-        elif key == "feedin_threshold":
-            self._attr_device_class = SensorDeviceClass.POWER_FACTOR
-            self._attr_state_class = SensorStateClass.MEASUREMENT
-        elif key in [
-            "production_kw", "consumption_kw", "feedin_kw", "self_consumption_kw",
-            "p_pv", "p_consumption", "p_grid", "p_storage"
-        ]:
-            self._attr_device_class = SensorDeviceClass.POWER
-            self._attr_state_class = SensorStateClass.MEASUREMENT
-        elif key == "soc":
-            self._attr_device_class = SensorDeviceClass.BATTERY
-            self._attr_state_class = SensorStateClass.MEASUREMENT
-            self._attr_native_unit_of_measurement = "%"
-        elif key in [
-            "e_pv_generation", "e_storage_charge", "e_storage_discharge",
-            "e_grid_import", "e_grid_export", "e_consumption"
-        ]:
-            self._attr_device_class = SensorDeviceClass.ENERGY
-            self._attr_state_class = SensorStateClass.TOTAL_INCREASING
-
-    @property
-    def translation_key(self) -> str:
-        """Return the translation key to localize the entity name."""
-        return self._key
-
-    @property
-    def native_value(self) -> Optional[float | int | str]:
-        """Return the value for the specific system detail field."""
-        return self.coordinator.data.get(self._key)
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return self.coordinator.last_update_success
-
-    @property
-    def device_info(self) -> dict:
-        """Inherit device metadata from the main system entity."""
-        data = self.coordinator.data
-        return {
-            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
-            "manufacturer": "SunPower",
-            "model": data.get("inverter_model", "Unknown"),
-            "sw_version": data.get("inv_version"),
-        }
-
-    @property
-    def icon(self) -> str:
-        """Return a suitable MDI icon for the sensor."""
-        if self._key == "soc":
-            if self.native_value is None:
-                return "mdi:battery-unknown"
-            soc = max(0, min(100, int(self.native_value)))
-            icon_level = (soc // 10) * 10
-            return f"mdi:battery-{icon_level}" if soc < 100 else "mdi:battery"
-        if "battery" in self._key:
-            return "mdi:battery"
-        if "pv_power" in self._key or "inverter" in self._key:
-            return "mdi:solar-power"
-        if "threshold" in self._key:
-            return "mdi:percent"
-        if self._key in ("production_kw", "p_pv"):
-            return "mdi:solar-panel"
-        if self._key in ("consumption_kw", "p_consumption"):
-            return "mdi:transmission-tower"
-        if self._key in ("feedin_kw", "p_grid"):
-            return "mdi:transmission-tower-export"
-        if self._key == "self_consumption_kw":
-            return "mdi:home-lightning-bolt"
-        if self._key == "p_storage":
-            return "mdi:battery"
-        if self._key == "e_grid_import":
-            return "mdi:transmission-tower-import"
-        if self._key == "e_grid_export":
-            return "mdi:transmission-tower-export"
-        if self._key == "e_consumption":
-            return "mdi:home-lightning-bolt"
-        if self._key == "e_pv_generation":
-            return "mdi:solar-panel"
-        if self._key == "e_storage_charge":
-            return "mdi:battery-arrow-up"
-        if self._key == "e_storage_discharge":
-            return "mdi:battery-arrow-down"
-        if self._key.startswith("e_"):
-            return "mdi:lightning-bolt-circle"
-        return "mdi:gauge"
-    
+   
 class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     """Sensor for the SunPower charging schedule."""
 
@@ -223,7 +300,7 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     _attr_unique_id = "sunpower_charging_schedule"
     _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
 
-    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
 
@@ -234,14 +311,13 @@ class ChargingScheduleSensor(CoordinatorEntity, SensorEntity):
     
     @property
     def device_info(self) -> dict:
-        """Return device metadata for the system."""
-        data = self.coordinator.data
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
         return {
-            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
-            "name": "SunPower Maxeon System",
+            "identifiers": {(DOMAIN, system_sn)},
             "manufacturer": "SunPower",
-            "model": data.get("inverter_model", "Unknown"),
-            "sw_version": data.get("inv_version"),
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
         }
 
     @property
@@ -272,7 +348,7 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     _attr_unique_id = "sunpower_discharging_schedule"
     _attr_icon = "mdi:calendar-clock"  # Shows a calendar with clock icon
 
-    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
 
@@ -283,14 +359,14 @@ class DischargingScheduleSensor(CoordinatorEntity, SensorEntity):
     
     @property
     def device_info(self) -> dict:
-        """Return device metadata for the system."""
-        data = self.coordinator.data
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
         return {
-            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
-            "name": "SunPower Maxeon System",
+            "identifiers": {(DOMAIN, system_sn)},
             "manufacturer": "SunPower",
-            "model": data.get("inverter_model", "Unknown"),
-            "sw_version": data.get("inv_version"),
+            "name": f"SunPower System {system_sn}",
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
         }
 
     @property
@@ -334,14 +410,14 @@ class BatteryUPSBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
     @property
     def device_info(self) -> dict:
-        """Return device metadata for this sensor."""
-        data = self.coordinator.data
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
         return {
-            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
-            "name": "SunPower Maxeon System",
+            "identifiers": {(DOMAIN, system_sn)},
             "manufacturer": "SunPower",
-            "model": data.get("inverter_model", "Unknown"),
-            "sw_version": data.get("inv_version"),
+            "name": f"SunPower System {system_sn}",
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
         }
     
     @property
@@ -357,7 +433,7 @@ class ExportLimitSensor(CoordinatorEntity, SensorEntity):
     _attr_unique_id = "sunpower_export_limit"
     _attr_icon = "mdi:transmission-tower-export"
 
-    def __init__(self, coordinator: SunPowerCoordinator) -> None:
+    def __init__(self, coordinator: SunPowerFullCoordinator) -> None:
         super().__init__(coordinator)
 
     @property
@@ -370,13 +446,14 @@ class ExportLimitSensor(CoordinatorEntity, SensorEntity):
 
     @property
     def device_info(self) -> dict:
-        data = self.coordinator.data
+        """Return device info for the system."""
+        system_sn = self.coordinator.shared_data.get("system_sn", "unknown")
         return {
-            "identifiers": {(DOMAIN, data.get("system_sn", "unknown"))},
-            "name": "SunPower Maxeon System",
+            "identifiers": {(DOMAIN, system_sn)},
             "manufacturer": "SunPower",
-            "model": data.get("inverter_model", "Unknown"),
-            "sw_version": data.get("inv_version"),
+            "name": f"SunPower System {system_sn}",
+            "model": self.coordinator.shared_data.get("inverter_model", "Unknown"),
+            "sw_version": self.coordinator.shared_data.get("inv_version"),
         }
 
     @property

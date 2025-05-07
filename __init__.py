@@ -7,16 +7,16 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 
-from .const import DOMAIN
+from .const import DOMAIN, shared_data
 from . import api
-from .coordinator import SunPowerCoordinator
-from .config_flow import OptionsFlowHandler  # 👈 Add this
+from .coordinator import SunPowerFullCoordinator, SunPowerRealtimeCoordinator, SunPowerPeriodicCoordinator
+from .config_flow import OptionsFlowHandler
 
 _LOGGER = logging.getLogger(__name__)
 
 _PLATFORMS: list[Platform] = [Platform.SENSOR]
 
-type SunPowerConfigEntry = ConfigEntry[SunPowerCoordinator]
+type SunPowerConfigEntry = ConfigEntry[SunPowerFullCoordinator]
 
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
@@ -33,36 +33,35 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         aiohttp_client.async_get_clientsession(hass), session
     )
 
-    coordinator = SunPowerCoordinator(hass, auth)
+    # Create all coordinators
+    full_coordinator = SunPowerFullCoordinator(hass, auth, shared_data)
+    realtime_coordinator = SunPowerRealtimeCoordinator(hass, auth, shared_data)
+    periodic_coordinator = SunPowerPeriodicCoordinator(hass, auth, shared_data)
 
     try:
-        await coordinator.async_config_entry_first_refresh()
-        if not coordinator.data:
+        await full_coordinator.async_config_entry_first_refresh()
+        await realtime_coordinator.async_config_entry_first_refresh()
+        await periodic_coordinator.async_config_entry_first_refresh()
+
+        if not shared_data.get("system_sn"):
             raise ConfigEntryNotReady("No systems found in SunPower account.")
+
     except Exception as err:
         raise ConfigEntryNotReady(f"Error connecting to SunPower API: {err}") from err
 
-    # Get system_sn and fetch charging schedule
-    system_sn = coordinator.data.get("system_sn")
-    if system_sn:
-        try:
-            charging_schedule = await auth.async_get_charging_schedule(system_sn)
-            discharging_schedule = await auth.async_get_discharging_schedule(system_sn)
-            export_limit = await auth.async_get_export_limit(system_sn)            
-            coordinator.data["charging_schedule"] = charging_schedule
-            coordinator.data["discharging_schedule"] = discharging_schedule
-            coordinator.data["export_limit"] = export_limit
-        except Exception as err:
-            _LOGGER.warning("Failed to fetch charging schedule for system %s: %s", system_sn, err)
-    else:
-        _LOGGER.warning("No system_sn found in coordinator data. Skipping charging schedule fetch.")
-
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
+    # Store coordinators in hass.data
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
+        "full": full_coordinator,
+        "realtime": realtime_coordinator,
+        "periodic": periodic_coordinator,
+        "shared_data": shared_data,
+    }
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
     await hass.config_entries.async_forward_entry_setups(entry, _PLATFORMS)
     return True
+
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: SunPowerConfigEntry) -> bool:
