@@ -43,12 +43,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SunPowerDetailSensor(coordinator, "soc",  "%"),
 
         #Energy Meter Sensors
-        SunPowerDetailSensor(coordinator, "e_pv_generation",  "Wh"),
-        SunPowerDetailSensor(coordinator, "e_storage_charge",  "Wh"),
-        SunPowerDetailSensor(coordinator, "e_storage_discharge", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_grid_import", "Wh"),
-        SunPowerDetailSensor(coordinator, "e_grid_export",  "Wh"),
-        SunPowerDetailSensor(coordinator, "e_consumption",  "Wh"),
+        SunPowerDetailSensor(coordinator, "e_pv_generation",  "kWh"),
+        SunPowerDetailSensor(coordinator, "e_storage_charge",  "kWh"),
+        SunPowerDetailSensor(coordinator, "e_storage_discharge", "kWh"),
+        SunPowerDetailSensor(coordinator, "e_grid_import", "kWh"),
+        SunPowerDetailSensor(coordinator, "e_grid_export",  "kWh"),
+        SunPowerDetailSensor(coordinator, "e_consumption",  "kWh"),
 
         #Schedule Coordinator
         ChargingScheduleSensor(coordinator),
@@ -117,7 +117,7 @@ class SunPowerDetailSensor(CoordinatorEntity, SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._attr_unique_id = f"sm_{key}"
+        self._attr_unique_id = f"s-m_{key}"
         self._attr_should_poll = True
         self._attr_native_unit_of_measurement = unit
 
