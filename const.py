@@ -48,25 +48,25 @@ SYSTEM_DETAILS = {
 ENERGY_METER = {
   "system_sn": "default",
   "timestamp": 1680334973,
-  "e_pv_generation": 7000,
-  "e_storage_charge": 4000,
-  "e_storage_discharge": 6000,
-  "e_grid_import": 1000,
-  "e_grid_export": 3000,
-  "e_consumption": 7000,
+  "e_pv_generation": None,
+  "e_storage_charge": None,
+  "e_storage_discharge": None,
+  "e_grid_import": None,
+  "e_grid_export": None,
+  "e_consumption": None,
   "status": "dummy_data",
-  "p_max_charge": 5000,
-  "p_max_discharge": 5000
+  "p_max_charge": None,
+  "p_max_discharge": None
 }
 
 POWER_METER = {
   "system_sn": "default",
   "timestamp": 1680334973,
-  "p_pv": 1992,
-  "p_grid": -1126,
-  "p_storage": 0,
-  "soc": 75,
-  "p_consumption": 866,
+  "p_pv": None,
+  "p_grid": None,
+  "p_storage": None,
+  "soc": None,
+  "p_consumption": None,
   "status": "dummy_data"
 }
 
