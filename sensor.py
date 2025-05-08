@@ -78,7 +78,7 @@ class SunPowerEnergySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Senso
     ) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._attr_unique_id = f"s-m_{key}"
+        self._attr_unique_id = f"sm_energy_{key}"
         self._attr_should_poll = False
         self._attr_native_unit_of_measurement = unit
         self._attr_device_class = SensorDeviceClass.ENERGY
@@ -137,7 +137,7 @@ class SunPowerPowerSensor(CoordinatorEntity[SunPowerRealtimeCoordinator], Sensor
         super().__init__(coordinator)
         self._key = key
         self._attr_native_unit_of_measurement = unit
-        self._attr_unique_id = f"s-m_{key}"
+        self._attr_unique_id = f"sm_power_{key}"
         self._attr_should_poll = False
 
         if key == "soc":
@@ -207,7 +207,7 @@ class SunPowerDetailSensor(CoordinatorEntity[SunPowerFullCoordinator], SensorEnt
     ) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._attr_unique_id = f"sunpower_{key}"
+        self._attr_unique_id = f"sms_{key}"
         self._attr_native_unit_of_measurement = unit
 
         # Assign device class if applicable
