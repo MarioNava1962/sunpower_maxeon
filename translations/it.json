@@ -25,10 +25,10 @@
         "name": "Stato di Carica"
       },
       "e_grid_export": {
-        "name": "Energia Esportata alla Rete"
+        "name": "Energia Esportata"
       },
       "e_grid_import": {
-        "name": "Energia Importata dalla Rete"
+        "name": "Energia Prelevata"
       },
       "e_pv_generation": {
         "name": "Generazione dei Pannelli"

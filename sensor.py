@@ -117,8 +117,8 @@ class SunPowerEnergySensor(CoordinatorEntity[SunPowerPeriodicCoordinator], Senso
             "e_pv_generation": "mdi:solar-panel",
             "e_storage_charge": "mdi:battery-arrow-up",
             "e_storage_discharge": "mdi:battery-arrow-down",
-            "e_grid_import": "mdi:transmission-tower-import",
-            "e_grid_export": "mdi:transmission-tower-export",
+            "e_grid_import": "mdi:transmission-tower-export",
+            "e_grid_export": "mdi:transmission-tower-import",
             "e_consumption": "mdi:home-lightning-bolt",
         }
         return icon_map.get(self._key, "mdi:gauge")

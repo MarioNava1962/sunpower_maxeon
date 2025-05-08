@@ -69,7 +69,7 @@ class AsyncConfigEntryAuth:
         """Fetch system power data from the power meter endpoint."""
         token = await self.async_get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
-        url = f"https://api2.sunpower.maxeon.com/v1/systems/{system_sn}/power_meter"
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/power_meter"
 
         try:
             async with self._websession.get(url, headers=headers) as resp:
@@ -90,7 +90,7 @@ class AsyncConfigEntryAuth:
         """Fetch system energy data from the energy meter endpoint."""
         token = await self.async_get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
-        url = f"https://api2.sunpower.maxeon.com/v1/systems/{system_sn}/energy_meter"
+        url = f"https://api.sunpower.maxeon.com/v1/systems/{system_sn}/energy_meter"
 
         try:
             async with self._websession.get(url, headers=headers) as resp:
