@@ -55,7 +55,7 @@ class SunPowerPeriodicCoordinator(DataUpdateCoordinator):
     def __init__(self, hass, api, shared_data):
         self.api = api
         self.shared_data = shared_data
-        super().__init__(hass, _LOGGER, name="Periodic Coordinator", update_interval=timedelta(minutes=15))
+        super().__init__(hass, _LOGGER, name="Periodic Coordinator", update_interval=timedelta(minutes=10))
 
     async def _async_update_data(self):
         system_sn = self.shared_data.get("system_sn")
